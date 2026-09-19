@@ -1,0 +1,12 @@
+{
+  "name": "mjeightyfive",
+  "description": "Curated agent skills and engineering policy.",
+  "owner": { "name": "Marcin Juszczyk" },
+  "plugins": [
+    {
+      "name": "mjeightyfive",
+      "source": "./",
+      "description": "Skills I maintain, plus the diff-only engineering policy."
+    }
+  ]
+}

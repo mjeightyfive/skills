@@ -1,0 +1,140 @@
+{
+  "version": 1,
+  "agents": ["claude-code", "cursor", "grok", "codex", "universal"],
+  "sources": {
+    "mine": {
+      "repo": "mjeightyfive/skills",
+      "tier": 1,
+      "label": "mine (patched)",
+      "owns": ["repo-wide audit", "engineering policy"]
+    },
+    "vercel": {
+      "repo": "vercel-labs/agent-skills",
+      "tier": 2,
+      "label": "Vercel",
+      "owns": ["guidelines compliance", "React and Next performance"],
+      "comment": "Some skills declare a name that differs from their directory. Skills are addressed by declared name on install and by directory upstream, so the ones that differ are mapped here. A new mismatch shows up in `audit` as an undeclared skill.",
+      "installNames": {
+        "composition-patterns": "vercel-composition-patterns",
+        "react-best-practices": "vercel-react-best-practices",
+        "react-native-skills": "vercel-react-native-skills",
+        "react-view-transitions": "vercel-react-view-transitions"
+      }
+    },
+    "emil": {
+      "repo": "emilkowalski/skills",
+      "tier": 3,
+      "label": "Emil Kowalski",
+      "owns": ["motion"]
+    },
+    "jakub": {
+      "repo": "jakubkrehel/skills",
+      "tier": 3,
+      "label": "Jakub Krehel",
+      "owns": ["static interface"]
+    },
+    "find": {
+      "repo": "vercel-labs/skills",
+      "tier": 2,
+      "label": "Vercel",
+      "scope": "global"
+    }
+  },
+  "profiles": {
+    "core": {
+      "description": "Any repository, any stack.",
+      "skills": ["mine/improve", "vercel/writing-guidelines"]
+    },
+    "web": {
+      "description": "React, Next.js, Tailwind. The mje.fi profile.",
+      "extends": ["core"],
+      "skills": [
+        "vercel/react-best-practices",
+        "vercel/web-design-guidelines",
+        "vercel/composition-patterns",
+        "vercel/react-view-transitions",
+        "vercel/vercel-optimize",
+        "jakub/better-typography",
+        "jakub/better-colors",
+        "jakub/better-layout",
+        "jakub/better-ui",
+        "jakub/break",
+        "jakub/explain-interface",
+        "jakub/interface-review",
+        "jakub/variant",
+        "emil/animate",
+        "emil/animation-vocabulary",
+        "emil/apple-design",
+        "emil/find-animation-opportunities",
+        "emil/improve-animations",
+        "emil/mobile-native",
+        "emil/review-animations",
+        "emil/prototype",
+        "emil/pick-ui-library"
+      ]
+    },
+    "cli": {
+      "description": "Command-line tools and services with no UI surface. The exy profile.",
+      "extends": ["core"],
+      "skills": []
+    },
+    "mobile": {
+      "description": "React Native and Expo.",
+      "extends": ["core"],
+      "skills": ["vercel/react-native-skills", "emil/animate-expo"]
+    },
+    "swift": {
+      "description": "Native Swift.",
+      "extends": ["core"],
+      "skills": ["emil/write-swift"]
+    }
+  },
+  "global": {
+    "description": "Installed once at user level, not per project.",
+    "skills": ["find/find-skills"]
+  },
+  "exclude": {
+    "vercel/deploy-to-vercel": {
+      "reason": "Instructs the agent to run `git commit` and `git push`. Policy beats precedence: the diff-only rule outranks the tier order.",
+      "recheck": "If upstream gains a no-push mode, reconsider."
+    },
+    "vercel/vercel-cli-with-tokens": {
+      "reason": "Same — documents `git commit` and `git push` as the preferred deploy path.",
+      "recheck": "If upstream gains a no-push mode, reconsider."
+    },
+    "jakub/better-accessibility": {
+      "reason": "Competes with vercel/web-design-guidelines on \"check accessibility\". Tier 2 beats tier 3.",
+      "losesTo": "vercel/web-design-guidelines",
+      "recheck": "Jakub's version is deeper (6 reference files). Swap if WIG coverage proves too shallow."
+    },
+    "jakub/better-writing": {
+      "reason": "Competes with vercel/writing-guidelines on \"review my copy\". Tier 2 beats tier 3.",
+      "losesTo": "vercel/writing-guidelines"
+    },
+    "jakub/better-interface": {
+      "reason": "Auto-triggering aggregator over the better-* set. Fires on any \"review my UI\", colliding with web-design-guidelines, then re-enters the individual skills.",
+      "losesTo": "jakub/interface-review",
+      "note": "interface-review is the same review, explicit-invoke only, so it never competes for a trigger."
+    },
+    "emil/emil-design-eng": {
+      "reason": "Auto-triggering umbrella over Emil's own set. Overlaps animate, review-animations and better-ui without adding a distinct job.",
+      "losesTo": "emil/animate"
+    },
+    "emil/ask-sonner": {
+      "reason": "Sonner is not in the stack.",
+      "recheck": "Include the day a project adds the sonner dependency."
+    }
+  },
+  "routing": [
+    {
+      "domain": "motion and animation",
+      "owner": "emil",
+      "rule": "Emil's skills own motion. jakub/better-ui is installed for static polish only — surfaces, icons, concentric radius, optical alignment, hit areas. Ignore its animations.md, enter-exit.md and icon-transitions.md."
+    },
+    {
+      "domain": "repo-wide audit producing plan files",
+      "owner": "mine",
+      "rule": "mine/improve is explicit-invoke only and covers the whole repo. emil/improve-animations auto-triggers and covers motion alone. They share an output shape, not a scope."
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "name": "@mjeightyfive/skills",
+  "version": "1.0.0",
+  "private": false,
+  "description": "One curated agent-skill set, shared across projects and agents.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Marcin Juszczyk",
+  "repository": "github:mjeightyfive/skills",
+  "engines": { "node": ">=20" },
+  "bin": { "skills-setup": "bin/cli.mjs" },
+  "files": ["bin", "skills", "template", "skills.json"]
+}

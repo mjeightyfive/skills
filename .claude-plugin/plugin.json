@@ -1,0 +1,8 @@
+{
+  "name": "mjeightyfive",
+  "description": "Curated agent skills and engineering policy.",
+  "version": "1.0.0",
+  "author": { "name": "Marcin Juszczyk" },
+  "repository": "https://github.com/mjeightyfive/skills",
+  "license": "MIT"
+}

@@ -1,0 +1,17 @@
+---
+description: Diff-only engineering policy. No AI traces, no mutating git, no deploys.
+alwaysApply: true
+---
+
+Read `AGENTS.md` at the repository root and follow it exactly. In short:
+
+- Leave no trace of AI tooling anywhere — no attribution trailers, no "Generated with", no
+  mention of any assistant in commits, PRs, code, comments, docs or config.
+- Produce diffs. Never run `git` commands that change repository state, and never push, tag,
+  open PRs or deploy. Print those commands instead.
+- Never create or switch branches. Work on the current branch.
+- Stage explicit paths only. Never `git add -A` or `git add .`.
+- Run tests, linting, type-checks and builds yourself before handing work back.
+
+Cursor's command denylist was deprecated in 1.3 and is not a boundary. The enforced version of
+the git rule is the allowlist Run Mode — see `docs/agents.md` in mjeightyfive/skills.
