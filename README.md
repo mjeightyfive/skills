@@ -41,6 +41,42 @@ Skills with `disable-model-invocation: true` never compete, because the model ca
 job, and it is why `improve` was patched to add the flag: without it, its prose narrowing was
 advisory and it collided with `improve-animations`.
 
+## Using improve
+
+`improve` is in every profile. An expensive model audits the repo and writes plan files; a
+cheaper one executes them in a later session. The advisor never edits source — the plan is
+the product.
+
+This is a patched fork of [shadcn/improve](https://github.com/shadcn/improve). That README is
+the original guide; this is the subset that actually applies here. `execute` and `--issues`
+are off (diffs, never history), the default effort is `quick` not `standard`, and the skill
+only fires when you name it.
+
+```
+/improve                        cheap pass: hotspots, top findings (the default)
+/improve deep                   every package, every category
+/improve security               one category (also: perf, tests, bugs, ...)
+/improve branch                 only what the current branch changes
+/improve next                   feature suggestions
+/improve plan <description>     skip the audit, spec one thing
+/improve review-plan <file>     critique and tighten an existing plan
+/improve reconcile              refresh the backlog: verify, unblock, retire
+```
+
+1. Run it at the Deep tier (`/improve`, or `/improve deep` on a large repo). It maps the
+   repo and comes back with a findings table.
+2. Pick which findings become plans — "plan 1, 3 and 5".
+3. Plans land in `plans/` — one file each, plus an index with the recommended order. Read
+   them; they are meant to be reviewed.
+4. Hand a plan to a Mechanical-tier session ("implement `plans/001-*.md`"). Do not ask the
+   advisor to implement it.
+5. Next session, `/improve reconcile` verifies what landed, refreshes what drifted, unblocks
+   what got stuck.
+
+Before a PR, `/improve branch` scopes the same flow to what the branch changed. Run the
+advisor at Deep and the executor at Mechanical — that split is the point. See
+[docs/agents.md](docs/agents.md).
+
 ## Staying current
 
 `skills update` pulls newer content for skills already listed. It cannot tell you an upstream
