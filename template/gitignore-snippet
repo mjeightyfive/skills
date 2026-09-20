@@ -1,0 +1,11 @@
+# Agent config. Tracked where it is shared policy — permission deny rules, Cursor
+# rules, skill content and the symlinks each agent reads it through. Ignored where
+# it is personal. The contents must be globbed rather than the directory itself:
+# git cannot re-include a child of an excluded directory.
+.claude/*
+!.claude/settings.json
+!.claude/skills/
+.claude/settings.local.json
+.claude/**/*.log
+.cursor/*
+!.cursor/rules/

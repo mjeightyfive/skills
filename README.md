@@ -30,13 +30,8 @@ Three kinds of skill, three mechanisms:
 [`skills.json`](skills.json) is the whole system. It records the source of every skill, which
 profile installs it, and — for everything not installed — why not.
 
-Precedence when two skills compete for the same trigger:
-
-```
-mine  >  Vercel  >  everyone else
-```
-
-and within the bottom tier, one owner per domain: Emil owns motion, Jakub owns static
+When two skills compete for the same trigger, precedence runs mine, then Vercel, then everyone
+else — and within that bottom tier, one owner per domain: Emil owns motion, Jakub owns static
 interface. Policy beats precedence: `deploy-to-vercel` is tier 2 and still excluded, because it
 instructs the agent to run `git commit` and `git push`.
 
@@ -57,6 +52,9 @@ npx github:mjeightyfive/skills audit
 It lists every upstream skill that is neither installed nor explicitly excluded, with its
 description, and exits non-zero while any remain undecided. Each one gets added to a profile or
 to `exclude` with a reason. Nothing is installed by drift.
+
+The full sequence — audit, update every consumer, commit — is in
+[docs/updating.md](docs/updating.md), along with the traps worth knowing.
 
 ## Commands
 

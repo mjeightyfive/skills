@@ -167,6 +167,20 @@ function seedTemplate() {
     cpSync(src, dest);
     console.log(`${c.green('✓')} ${to}`);
   }
+
+  // .gitignore is appended to rather than replaced — every project already has
+  // one. Skipped when the project has already ruled on these paths, whichever
+  // way it ruled.
+  const snippet = join(ROOT, 'template/gitignore-snippet');
+  const ignoreFile = join(CWD, '.gitignore');
+  if (!existsSync(snippet)) return;
+  const current = existsSync(ignoreFile) ? readFileSync(ignoreFile, 'utf8') : '';
+  if (current.includes('.claude/settings.json')) {
+    console.log(`${c.dim('·')} .gitignore ${c.dim('already rules on .claude, left alone')}`);
+    return;
+  }
+  writeFileSync(ignoreFile, `${current.trimEnd()}\n\n${readFileSync(snippet, 'utf8')}`);
+  console.log(`${c.green('✓')} .gitignore ${c.dim('agent config block appended')}`);
 }
 
 // ---------------------------------------------------------------- audit
