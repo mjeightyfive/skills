@@ -35,6 +35,34 @@ differently:
 Treat all three as guardrails, not sandboxes. The reason the rule is also written into
 `AGENTS.md` is that the guardrail catches the obvious spelling and the prose catches the intent.
 
+## How AGENTS.md is kept in sync
+
+Two generated regions, both marker-delimited, both rewritten on `init` and `update`:
+
+1. **The routing block** (`<!-- skills:begin -->`) — derived from `skills.json`. Always
+   regenerated. Do not edit it.
+2. **Named policy sections** (`<!-- skills:policy:<id>:begin -->`) — copied from
+   `template/AGENTS.md`. Regenerated when the copy is still what the CLI last wrote. If the
+   author has edited inside the markers, the CLI leaves the text alone; if the template also
+   moved, it reports a conflict and refuses to overwrite.
+
+They are several named sections, not one policy block. A consumer's `AGENTS.md` is mostly
+theirs — mje.fi rewrote Non-negotiable, exy replaced it with No AI traces. One wrap around
+the whole template would either stamp over that or sit in permanent conflict, and a new
+section like Proposing work could not land without taking the rest. Each portable section is
+its own region, opted in by markers in the template. Unmarked headings in the template are
+still seed-only: copied on first `init`, never merged, same as `settings.json`. Today the
+only opted-in section is Proposing work; Non-negotiable and Skills stay unmarked because
+every consumer has rewritten them.
+
+When a marked section is missing, `update` inserts it before the routing block (or after the
+nearest already-present policy section, so template order holds). When the heading is already
+there without markers and the text still matches the template, the CLI wraps it in place
+rather than appending a duplicate.
+
+The hash on the begin marker is a dirty bit, not a signature. It records what the CLI last
+wrote so a later `update` can tell a local edit from a stale copy.
+
 ## Model and effort
 
 Work splits into three tiers. The table maps them across the three tools; model lineups move

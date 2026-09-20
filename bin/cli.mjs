@@ -3,14 +3,13 @@ import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, writeFileSync, cpSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { parsePolicySections, syncAgentsMd, ROUTING_BEGIN, ROUTING_END } from './agents-md.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(HERE, '..');
 const CWD = process.cwd();
 
 const MANIFEST = JSON.parse(readFileSync(join(ROOT, 'skills.json'), 'utf8'));
-const BEGIN = '<!-- skills:begin -->';
-const END = '<!-- skills:end -->';
 
 const c = {
   dim: (s) => `\x1b[2m${s}\x1b[0m`,
@@ -111,10 +110,10 @@ function install(groups, { agents, global: isGlobal, local }) {
  * The dedup decisions are derived from the manifest, never hand-copied into a
  * project. Regenerated in place on every init and update.
  */
-function routingBlock(profileName) {
+export function routingBlock(profileName) {
   const refs = resolveProfile(profileName);
   const lines = [
-    BEGIN,
+    ROUTING_BEGIN,
     '',
     '## Installed skills',
     '',
@@ -130,21 +129,28 @@ function routingBlock(profileName) {
   for (const [ref, meta] of Object.entries(MANIFEST.exclude)) {
     lines.push(`- \`${ref}\` — ${meta.reason}`);
   }
-  lines.push('', `${refs.length} skills installed. Run \`skills-setup list\` to see them.`, '', END);
+  lines.push('', `${refs.length} skills installed. Run \`skills-setup list\` to see them.`, '', ROUTING_END);
   return lines.join('\n');
 }
 
-function writeRouting(profileName) {
+export function writeAgents(profileName) {
   const path = join(CWD, 'AGENTS.md');
-  const block = routingBlock(profileName);
-  let body = existsSync(path) ? readFileSync(path, 'utf8') : '# Agent instructions\n';
-  if (body.includes(BEGIN) && body.includes(END)) {
-    body = body.replace(new RegExp(`${BEGIN}[\\s\\S]*?${END}`), block);
-  } else {
-    body = `${body.trimEnd()}\n\n${block}\n`;
-  }
+  const template = readFileSync(join(ROOT, 'template/AGENTS.md'), 'utf8');
+  const previous = existsSync(path) ? readFileSync(path, 'utf8') : '# Agent instructions\n';
+  const { body, notes, conflicts } = syncAgentsMd(previous, {
+    sections: parsePolicySections(template),
+    routing: routingBlock(profileName),
+  });
   writeFileSync(path, body);
+  for (const note of notes) {
+    const local = note.includes('left alone');
+    console.log(`${local ? c.dim('·') : c.green('✓')} AGENTS.md ${note}`);
+  }
   console.log(`${c.green('✓')} AGENTS.md routing block`);
+  for (const conflict of conflicts) {
+    console.error(`${c.red('error')} AGENTS.md ${conflict}`);
+  }
+  if (conflicts.length) process.exitCode = 1;
 }
 
 // ---------------------------------------------------------------- template
@@ -299,9 +305,9 @@ const usage = `
 ${c.bold('skills-setup')} — one curated skill set across every project and every agent
 
   ${c.cyan('init')}    [--profile web] [--agents claude-code,cursor,grok] [--local]
-          Install a profile here, seed the policy files, write the routing block.
+          Install a profile here, seed the policy files, write routing and policy blocks.
   ${c.cyan('update')}  [--profile web]
-          Pull newer upstream content and regenerate the routing block.
+          Pull newer upstream content and regenerate routing and policy blocks.
   ${c.cyan('audit')}
           Report upstream skills the manifest has never ruled on.
   ${c.cyan('list')}    [--profile web]
@@ -312,42 +318,45 @@ ${c.bold('skills-setup')} — one curated skill set across every project and eve
 Profiles: ${Object.keys(MANIFEST.profiles).join(', ')}
 `;
 
-const command = process.argv[2];
-const profile = arg('--profile', 'web');
-const agents = (arg('--agents') ?? MANIFEST.agents.join(',')).split(',').map((s) => s.trim()).filter(Boolean);
-const local = process.argv.includes('--local');
+const invokedDirectly = process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url);
+if (invokedDirectly) {
+  const command = process.argv[2];
+  const profile = arg('--profile', 'web');
+  const agents = (arg('--agents') ?? MANIFEST.agents.join(',')).split(',').map((s) => s.trim()).filter(Boolean);
+  const local = process.argv.includes('--local');
 
-switch (command) {
-  case 'init': {
-    console.log(`${c.bold('Installing')} profile ${c.cyan(profile)} for ${c.dim(agents.join(', '))}`);
-    install(groupBySource(resolveProfile(profile)), { agents, local });
-    console.log();
-    seedTemplate();
-    writeRouting(profile);
-    console.log(`\n${c.green('Done.')} ${c.dim('Commit skills-lock.json and .agents/skills so the set is reproducible.')}`);
-    break;
-  }
-  case 'update': {
-    try {
-      execFileSync('npx', ['-y', 'skills@latest', 'update', '-p', '-y'], { stdio: 'inherit', cwd: CWD });
-    } catch {
-      die('`skills update` failed');
+  switch (command) {
+    case 'init': {
+      console.log(`${c.bold('Installing')} profile ${c.cyan(profile)} for ${c.dim(agents.join(', '))}`);
+      install(groupBySource(resolveProfile(profile)), { agents, local });
+      console.log();
+      seedTemplate();
+      writeAgents(profile);
+      console.log(`\n${c.green('Done.')} ${c.dim('Commit skills-lock.json and .agents/skills so the set is reproducible.')}`);
+      break;
     }
-    writeRouting(profile);
-    console.log(`\n${c.dim('Now run')} skills-setup audit ${c.dim('to catch skills upstream added since you last looked.')}`);
-    break;
+    case 'update': {
+      try {
+        execFileSync('npx', ['-y', 'skills@latest', 'update', '-p', '-y'], { stdio: 'inherit', cwd: CWD });
+      } catch {
+        die('`skills update` failed');
+      }
+      writeAgents(profile);
+      console.log(`\n${c.dim('Now run')} skills-setup audit ${c.dim('to catch skills upstream added since you last looked.')}`);
+      break;
+    }
+    case 'global': {
+      install(groupBySource(MANIFEST.global.skills), { agents, global: true });
+      break;
+    }
+    case 'audit':
+      await audit();
+      break;
+    case 'list':
+      list(profile);
+      break;
+    default:
+      console.log(usage);
+      process.exit(command ? 1 : 0);
   }
-  case 'global': {
-    install(groupBySource(MANIFEST.global.skills), { agents, global: true });
-    break;
-  }
-  case 'audit':
-    await audit();
-    break;
-  case 'list':
-    list(profile);
-    break;
-  default:
-    console.log(usage);
-    process.exit(command ? 1 : 0);
 }

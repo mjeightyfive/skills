@@ -9,5 +9,6 @@
   "repository": "github:mjeightyfive/skills",
   "engines": { "node": ">=20" },
   "bin": { "skills-setup": "bin/cli.mjs" },
+  "scripts": { "test": "node --test test/*.test.mjs" },
   "files": ["bin", "skills", "template", "skills.json"]
 }

@@ -47,6 +47,12 @@ cd ~/Dev/exy && git add skills-lock.json .agents/skills .claude/skills AGENTS.md
 and the generated `AGENTS.md` block is rewritten to claim the web set. The installed skills stay
 correct — it is the block that lies. Read the `AGENTS.md` diff before committing.
 
+**Named policy sections regenerate the same way, except they will not overwrite a local edit.**
+A section whose text is still what the CLI last wrote is replaced from `template/AGENTS.md`. A
+section the author has edited is left alone; if the template also moved, `update` exits
+non-zero and prints a conflict. That is how a new heading such as Proposing work reaches a
+repo that already had `AGENTS.md`, without silently clobbering Non-negotiable.
+
 **Use the local checkout, not `npx github:`.** npx caches GitHub specs, so right after you push
 a manifest change the npx form can still serve the old one. `node ~/Dev/skills/bin/cli.mjs` reads
 the working copy. The npx form is for machines without the checkout — pull first if you push

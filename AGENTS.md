@@ -21,8 +21,11 @@ This repository is the source of the skill set, not a consumer of it.
 - **Never edit a skill under `skills/` that carries an `UPSTREAM.md`** without adding the
   change to that file's local-changes list. The point of the fork is that the divergence is
   written down.
-- **Template files are copied, never merged.** `init` skips a destination that already exists,
-  so a change in `template/` does not reach a project that already has the file. Say so when
-  changing one.
-- The routing block in a project's `AGENTS.md` is generated from `skills.json`. Do not hand-edit
-  it anywhere; change the manifest and re-run `update`.
+- **Template files are copied, never merged**, except the named policy sections in
+  `template/AGENTS.md`. Those are marker-delimited and rewritten on `update` like the
+  routing block. Unmarked template prose is still seed-only: a change there does not
+  reach a project that already has the file. Say so when changing one.
+- The routing block in a project's `AGENTS.md` is generated from `skills.json`. Named
+  policy sections come from `template/AGENTS.md`. Do not hand-edit either; change the
+  source and re-run `update`. Local edits inside policy markers are left alone, or
+  reported as a conflict if the template also moved.

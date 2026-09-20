@@ -7,7 +7,7 @@ npx github:mjeightyfive/skills init --profile web
 ```
 
 That installs the profile's skills into `.agents/skills/`, symlinks them for Claude Code and
-Grok, seeds the policy files, and writes a routing block into `AGENTS.md`. Commit
+Grok, seeds the policy files, and writes routing and named policy blocks into `AGENTS.md`. Commit
 `skills-lock.json` and the set is reproducible.
 
 ## How it is put together
@@ -23,7 +23,8 @@ Three kinds of skill, three mechanisms:
 3. **Policy** is not a skill at all. Skills load conditionally on a description match, so a
    rule that must hold on every turn cannot be one. Policy lives in
    [`template/`](template/) — `AGENTS.md` for the prose, and the per-agent config that
-   actually enforces it. See [docs/agents.md](docs/agents.md).
+   actually enforces it. Marked sections in that file sync on `update`; unmarked prose is
+   seed-only. See [docs/agents.md](docs/agents.md).
 
 ## The manifest is the decision
 
@@ -60,8 +61,8 @@ The full sequence — audit, update every consumer, commit — is in
 
 | | |
 |---|---|
-| `init --profile <name>` | Install a profile here, seed policy files, write the routing block |
-| `update --profile <name>` | Pull newer upstream content, regenerate the routing block |
+| `init --profile <name>` | Install a profile here, seed policy files, write routing and policy blocks |
+| `update --profile <name>` | Pull newer upstream content, regenerate routing and policy blocks |
 | `audit` | Report upstream skills the manifest has never ruled on |
 | `list --profile <name>` | Show what a profile resolves to, and what is excluded and why |
 | `global` | Install the user-level skills once |
