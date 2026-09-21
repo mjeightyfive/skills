@@ -65,14 +65,16 @@ wrote so a later `update` can tell a local edit from a stale copy.
 
 ## Model and effort
 
-Work splits into three tiers. The table maps them across the three tools; model lineups move
-quarterly, so check the picker rather than trusting the name.
+Work splits into three tiers. The table maps them across the three tools; names refresh from
+[docs/models.md](models.md) when you run `skills-setup models`.
 
+<!-- skills:models:effort-table:begin -->
 | Tier | Work | Claude Code | Cursor | Grok Build |
 |---|---|---|---|---|
-| Deep | Architecture, multi-file refactor, repo audits, debugging something that resists a first guess | Opus 5, high or max effort | Claude Opus 5, or Grok 4.6 at high effort | Grok 4.6, high effort |
-| Standard | Feature work against a clear spec, a contained bug fix, a review | Opus 5, medium effort | Composer 2.5, or Grok 4.6 at medium | Grok 4.6, medium effort |
-| Mechanical | Renames, file moves, config edits, boilerplate, anything where the answer is already decided | Sonnet 5, or Haiku 4.5 for pure mechanics | Composer 2.5 | Grok 4.5, fast mode |
+| Deep | Architecture, multi-file refactor, repo audits, debugging something that resists a first guess | Opus 5 High or Max | Opus 5 High · Grok 4.6 High · GPT-5.6 Sol High | Grok 4.6 High |
+| Standard | Feature work against a clear spec, a contained bug fix, a review | Opus 5 Medium | Composer 2.5 · Grok 4.6 Medium · GPT-5.6 Sol Medium | Grok 4.6 Medium |
+| Mechanical | Renames, file moves, config edits, boilerplate, anything where the answer is already decided | Sonnet 5 · Haiku 4.5 | Composer 2.5 | Grok 4.5 Fast |
+<!-- skills:models:effort-table:end -->
 
 Notes that bite in practice:
 
@@ -81,9 +83,10 @@ Notes that bite in practice:
 - Composer 2.5 calibrates its own effort from the task, so there is no dial to set — which
   makes it a poor fit for the Deep tier, where you want to force more work than the task
   appears to need.
-- The `improve` skill is explicit-invoke and read-only. Run it at the Deep tier; it produces
-  plan files that the Mechanical tier can then execute without re-reading the codebase. That
-  split is the whole point of the skill.
+- The `improve` skill is explicit-invoke and read-only. Advisor commands use the High knobs
+  (`/improve deep` uses Ceiling). That split — expensive model writes `plans/`, cheaper one
+  executes them — is the whole point. Plan mode is an optional harness in the
+  [README runbook](../README.md#using-improve), not a substitute for the plan file.
 
 ## Switching tools mid-task
 

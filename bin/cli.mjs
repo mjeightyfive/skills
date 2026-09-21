@@ -4,6 +4,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync, cpSync } from 'node
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parsePolicySections, syncAgentsMd, ROUTING_BEGIN, ROUTING_END } from './agents-md.mjs';
+import { isSkillsCheckout, refreshModels } from './models.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(HERE, '..');
@@ -308,6 +309,9 @@ ${c.bold('skills-setup')} — one curated skill set across every project and eve
           Install a profile here, seed the policy files, write routing and policy blocks.
   ${c.cyan('update')}  [--profile web]
           Pull newer upstream content and regenerate routing and policy blocks.
+          In this checkout, also refreshes CursorBench model names first.
+  ${c.cyan('models')}
+          Fetch CursorBench and rewrite model names in this repo (source checkout only).
   ${c.cyan('audit')}
           Report upstream skills the manifest has never ruled on.
   ${c.cyan('list')}    [--profile web]
@@ -336,6 +340,14 @@ if (invokedDirectly) {
       break;
     }
     case 'update': {
+      if (resolve(CWD) === ROOT && isSkillsCheckout()) {
+        try {
+          const result = await refreshModels();
+          if (result.failed) die('CursorBench fetch failed; not continuing update');
+        } catch (err) {
+          die(err.message);
+        }
+      }
       try {
         execFileSync('npx', ['-y', 'skills@latest', 'update', '-p', '-y'], { stdio: 'inherit', cwd: CWD });
       } catch {
@@ -343,6 +355,15 @@ if (invokedDirectly) {
       }
       writeAgents(profile);
       console.log(`\n${c.dim('Now run')} skills-setup audit ${c.dim('to catch skills upstream added since you last looked.')}`);
+      break;
+    }
+    case 'models': {
+      try {
+        const result = await refreshModels({ fetchPage: !process.argv.includes('--offline') });
+        if (result.failed) process.exitCode = 1;
+      } catch (err) {
+        die(err.message);
+      }
       break;
     }
     case 'global': {

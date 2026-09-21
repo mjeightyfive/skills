@@ -2,13 +2,22 @@
 
 Two different things go stale, and they need different commands.
 
+- **Model names** move when CursorBench republishes. `models` fetches the board and rewrites
+  the tables in this repo.
 - **Skill content** moves when an upstream edits a skill you already have. `update` pulls it.
 - **The set itself** moves when an upstream *adds* a skill. Nothing pulls that, because nothing
   knows whether you want it. `audit` reports it and you rule on it in `skills.json`.
 
-Run `audit` first. Deciding after you have already propagated an update means doing it twice.
+Run `models` first, then `audit`. Deciding after you have already propagated an update means
+doing it twice.
 
 ## The runbook
+
+Refresh the CursorBench snapshot and the generated model tables:
+
+```bash
+cd ~/Dev/skills && node bin/cli.mjs models
+```
 
 Check for skills no one has ruled on yet:
 

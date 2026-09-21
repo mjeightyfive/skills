@@ -1,0 +1,65 @@
+{
+  "source": "https://cursor.com/cursorbench",
+  "families": {
+    "opus": { "match": "^Opus\\s" },
+    "sonnet": { "match": "^Sonnet\\s" },
+    "haiku": { "match": "^Haiku\\s" },
+    "fable": { "match": "^Fable\\s" },
+    "grok": { "match": "^Grok\\s" },
+    "sol": { "match": "^GPT-[\\d.]+\\s+Sol\\b" },
+    "terra": { "match": "^GPT-[\\d.]+\\s+Terra\\b" },
+    "luna": { "match": "^GPT-[\\d.]+\\s+Luna\\b" },
+    "composer": { "match": "^Composer\\s" }
+  },
+  "roles": {
+    "ceiling": [
+      { "family": "opus", "effort": "max" },
+      { "family": "grok", "effort": "extra-high" },
+      { "family": "sol", "effort": "max" }
+    ],
+    "high": [
+      { "family": "opus", "effort": "high" },
+      { "family": "grok", "effort": "high" },
+      { "family": "sol", "effort": "high" }
+    ],
+    "medium": [
+      { "family": "opus", "effort": "medium" },
+      { "family": "composer", "effort": null },
+      { "family": "grok", "effort": "medium" },
+      { "family": "sol", "effort": "medium" }
+    ],
+    "mechanical": [
+      { "family": "sonnet", "effort": null, "display": "base" },
+      { "family": "haiku", "effort": null, "display": "base", "fallback": "haiku" },
+      { "family": "composer", "effort": null },
+      { "family": "grok", "effort": "fast", "fallback": "grok-fast" }
+    ]
+  },
+  "fallbacks": {
+    "haiku": "Haiku 4.5",
+    "grok-fast": "Grok 4.5 Fast"
+  },
+  "improve": [
+    { "command": "`/improve`", "what": "cheap pass, hotspots, top findings (default)", "role": "high" },
+    { "command": "`/improve deep`", "what": "every package, every category", "role": "ceiling" },
+    { "command": "`/improve security`", "what": "one category (also: perf, tests, bugs, \u2026)", "role": "high" },
+    { "command": "`/improve branch`", "what": "only what the current branch changes", "role": "high" },
+    { "command": "`/improve next`", "what": "feature suggestions", "role": "high" },
+    { "command": "`/improve plan <description>`", "what": "skip the audit, spec one thing", "role": "high" },
+    { "command": "`/improve review-plan <file>`", "what": "critique and tighten an existing plan", "role": "medium" },
+    { "command": "`/improve reconcile`", "what": "refresh the backlog", "role": "medium" },
+    { "command": "implement `plans/NNN-*.md`", "what": "execute a written plan", "role": "mechanical" }
+  ],
+  "effortWork": {
+    "agents": {
+      "deep": "Architecture, multi-file refactor, repo audits, debugging something that resists a first guess",
+      "standard": "Feature work against a clear spec, a contained bug fix, a review",
+      "mechanical": "Renames, file moves, config edits, boilerplate, anything where the answer is already decided"
+    },
+    "template": {
+      "deep": "Architecture, multi-file refactor, repo audits, debugging that resists a first guess",
+      "standard": "Feature work against a clear spec, a contained fix, a review",
+      "mechanical": "Renames, file moves, config edits, executing an already-written plan"
+    }
+  }
+}

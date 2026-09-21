@@ -174,7 +174,7 @@ function findUnmarkedH2(text, title) {
 }
 
 function nextBoundary(text, from, skip) {
-  const re = /^(#{1,2} )|^<!-- skills:/gm;
+  const re = /^(#{1,2} )|^<!-- skills:begin|^<!-- skills:policy:/gm;
   re.lastIndex = from;
   let m;
   while ((m = re.exec(text))) {

@@ -52,35 +52,54 @@ the original guide; this is the subset that actually applies here. `execute` and
 are off (diffs, never history), the default effort is `quick` not `standard`, and the skill
 only fires when you name it.
 
-```
-/improve                        cheap pass: hotspots, top findings (the default)
-/improve deep                   every package, every category
-/improve security               one category (also: perf, tests, bugs, ...)
-/improve branch                 only what the current branch changes
-/improve next                   feature suggestions
-/improve plan <description>     skip the audit, spec one thing
-/improve review-plan <file>     critique and tighten an existing plan
-/improve reconcile              refresh the backlog: verify, unblock, retire
-```
+`quick` / `deep` is audit coverage, not model quality. Only `/improve deep` uses the ceiling
+knobs. Names below come from [docs/models.md](docs/models.md) and refresh with
+`skills-setup models`.
 
-1. Run it at the Deep tier (`/improve`, or `/improve deep` on a large repo). It maps the
-   repo and comes back with a findings table.
-2. Pick which findings become plans — "plan 1, 3 and 5".
-3. Plans land in `plans/` — one file each, plus an index with the recommended order. Read
-   them; they are meant to be reviewed.
-4. Hand a plan to a Mechanical-tier session ("implement `plans/001-*.md`"). Do not ask the
-   advisor to implement it.
-5. Next session, `/improve reconcile` verifies what landed, refreshes what drifted, unblocks
-   what got stuck.
+<!-- skills:models:improve-runs:begin -->
+| Command | What | Run as |
+|---|---|---|
+| `/improve` | cheap pass, hotspots, top findings (default) | Opus 5 High · Grok 4.6 High · GPT-5.6 Sol High |
+| `/improve deep` | every package, every category | Opus 5 Max · Grok 4.6 Extra High · GPT-5.6 Sol Max |
+| `/improve security` | one category (also: perf, tests, bugs, …) | Opus 5 High · Grok 4.6 High · GPT-5.6 Sol High |
+| `/improve branch` | only what the current branch changes | Opus 5 High · Grok 4.6 High · GPT-5.6 Sol High |
+| `/improve next` | feature suggestions | Opus 5 High · Grok 4.6 High · GPT-5.6 Sol High |
+| `/improve plan <description>` | skip the audit, spec one thing | Opus 5 High · Grok 4.6 High · GPT-5.6 Sol High |
+| `/improve review-plan <file>` | critique and tighten an existing plan | Opus 5 Medium · Composer 2.5 · Grok 4.6 Medium · GPT-5.6 Sol Medium |
+| `/improve reconcile` | refresh the backlog | Opus 5 Medium · Composer 2.5 · Grok 4.6 Medium · GPT-5.6 Sol Medium |
+| implement `plans/NNN-*.md` | execute a written plan | Sonnet 5 · Haiku 4.5 · Composer 2.5 · Grok 4.5 Fast |
+<!-- skills:models:improve-runs:end -->
 
-Before a PR, `/improve branch` scopes the same flow to what the branch changed. Run the
-advisor at Deep and the executor at Mechanical — that split is the point. See
-[docs/agents.md](docs/agents.md).
+1. **(optional) Plan mode** — `Shift+Tab` (Claude: `/plan`). Recon, questions, findings
+   table. Do not **Build**, do not approve-as-implement. Claude Plan mode blocks source
+   edits. Cursor's plan file is a this-session artifact, not `plans/*.md`. Skip on Grok, or
+   when already in Agent.
+2. **Write the handoff** — Agent,
+   <!-- skills:models:role-high:begin -->Opus 5 High · Grok 4.6 High · GPT-5.6 Sol High<!-- skills:models:role-high:end -->.
+   `/improve plan add a --json flag to the list command, matching existing output flags` —
+   or, after a bare `/improve` findings table, "plan 1, 3 and 5". Leave Plan mode first; it
+   blocks the writes. Skip only when this same capable session should implement after Plan
+   mode.
+3. **(optional) Review** —
+   <!-- skills:models:role-medium:begin -->Opus 5 Medium · Composer 2.5 · Grok 4.6 Medium · GPT-5.6 Sol Medium<!-- skills:models:role-medium:end -->.
+   `/improve review-plan plans/001-json-list-flag.md`. Skip if the file already looks tight.
+4. **Implement** — **new session**, Agent (not Plan mode),
+   <!-- skills:models:role-mechanical:begin -->Sonnet 5 · Haiku 4.5 · Composer 2.5 · Grok 4.5 Fast<!-- skills:models:role-mechanical:end -->.
+   `implement plans/001-json-list-flag.md`. Plan mode here would re-plan a spec that is
+   already written.
+5. **(optional) Reconcile** — later, same models as review. `/improve reconcile`. Skip
+   until something has landed or stuck.
+
+A full audit is the same loop with `/improve` (or `/improve deep` / `/improve branch`) at
+step 2 instead of `/improve plan`. `/improve deep` uses
+<!-- skills:models:role-ceiling:begin -->Opus 5 Max · Grok 4.6 Extra High · GPT-5.6 Sol Max<!-- skills:models:role-ceiling:end -->.
+`/improve branch` before a PR.
 
 ## Staying current
 
 `skills update` pulls newer content for skills already listed. It cannot tell you an upstream
-grew a skill you have never ruled on — that is what `audit` is for:
+grew a skill you have never ruled on — that is what `audit` is for. Model names in this README
+and in `AGENTS.md` come from CursorBench and refresh with `skills-setup models`.
 
 ```bash
 npx github:mjeightyfive/skills audit
@@ -90,7 +109,7 @@ It lists every upstream skill that is neither installed nor explicitly excluded,
 description, and exits non-zero while any remain undecided. Each one gets added to a profile or
 to `exclude` with a reason. Nothing is installed by drift.
 
-The full sequence — audit, update every consumer, commit — is in
+The full sequence — models, audit, update every consumer, commit — is in
 [docs/updating.md](docs/updating.md), along with the traps worth knowing.
 
 ## Commands
@@ -99,6 +118,7 @@ The full sequence — audit, update every consumer, commit — is in
 |---|---|
 | `init --profile <name>` | Install a profile here, seed policy files, write routing and policy blocks |
 | `update --profile <name>` | Pull newer upstream content, regenerate routing and policy blocks |
+| `models` | Fetch CursorBench and rewrite model names in this repo (source checkout only) |
 | `audit` | Report upstream skills the manifest has never ruled on |
 | `list --profile <name>` | Show what a profile resolves to, and what is excluded and why |
 | `global` | Install the user-level skills once |
