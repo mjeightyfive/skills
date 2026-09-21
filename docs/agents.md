@@ -71,15 +71,15 @@ Work splits into three tiers. The table maps them across the three tools; names 
 <!-- skills:models:effort-table:begin -->
 | Tier | Work | Claude Code | Cursor | Grok Build |
 |---|---|---|---|---|
-| Deep | Architecture, multi-file refactor, repo audits, debugging something that resists a first guess | Opus 5 High or Max | Opus 5 High · Grok 4.6 High · GPT-5.6 Sol High | Grok 4.6 High |
-| Standard | Feature work against a clear spec, a contained bug fix, a review | Opus 5 Medium | Composer 2.5 · Grok 4.6 Medium · GPT-5.6 Sol Medium | Grok 4.6 Medium |
-| Mechanical | Renames, file moves, config edits, boilerplate, anything where the answer is already decided | Sonnet 5 · Haiku 4.5 | Composer 2.5 | Grok 4.5 Fast |
+| Deep | Architecture, multi-file refactor, repo audits, debugging something that resists a first guess | Opus 5 High or Max | Opus 5 High · Grok 4.7 High · GPT-5.6 Sol High | Grok 4.7 High |
+| Standard | Feature work against a clear spec, a contained bug fix, a review | Opus 5 Medium | Composer 2.5 · Grok 4.7 Medium · GPT-5.6 Sol Medium | Grok 4.7 Medium |
+| Mechanical | Renames, file moves, config edits, boilerplate, anything where the answer is already decided | Sonnet 5 · Haiku 4.5 | Composer 2.5 | Grok 4.7 Fast |
 <!-- skills:models:effort-table:end -->
 
 Notes that bite in practice:
 
-- Cursor's effort switching and fast mode need Pro or higher. On the entry plan Grok 4.5 and
-  4.6 are pinned to medium effort, so the Deep row collapses into the Standard row.
+- Cursor's effort switching and fast mode need Pro or higher. On the entry plan Grok 4.5,
+  4.6, and 4.7 are pinned to medium effort, so the Deep row collapses into the Standard row.
 - Composer 2.5 calibrates its own effort from the task, so there is no dial to set — which
   makes it a poor fit for the Deep tier, where you want to force more work than the task
   appears to need.

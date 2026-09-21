@@ -40,6 +40,18 @@ test('parses a markdown CursorBench table and drops duplicate rows', () => {
   assert.equal(pickRow(rows, 'grok', 'extra-high').name, 'Grok 4.6 Extra High');
 });
 
+test('parses nested CursorBench cells split by React comments', () => {
+  const text = `<table><tr><td>6</td><td><span class="truncate">Grok 4.7 Extra High</span><span></span></td><td>46.3<!-- -->%</td><td>$<!-- -->6.01</td><td>70,141</td><td>88</td></tr></table>`;
+  const { rows } = parseLeaderboard(text, policy);
+  const row = rows.find((r) => r.name === 'Grok 4.7 Extra High');
+  assert.equal(row.rank, 6);
+  assert.equal(row.effort, 'extra-high');
+  assert.equal(row.score, 46.3);
+  assert.equal(row.cost, 6.01);
+  assert.equal(row.tokens, 70141);
+  assert.equal(row.steps, 88);
+});
+
 test('parses an HTML table and strips a Claude prefix', () => {
   const text = readFileSync(join(FIXTURES, 'cursorbench.html'), 'utf8');
   const { rows } = parseLeaderboard(text, policy);
@@ -51,12 +63,12 @@ test('pairs pinned families and ignores Fable', () => {
   const snapshot = loadSnapshot(ROOT);
   const picks = pair(snapshot, policy);
   assert.equal(picks.ceiling.opus, 'Opus 5 Max');
-  assert.equal(picks.ceiling.grok, 'Grok 4.6 Extra High');
+  assert.equal(picks.ceiling.grok, 'Grok 4.7 Extra High');
   assert.equal(picks.ceiling.sol, 'GPT-5.6 Sol Max');
   assert.equal(picks.high.opus, 'Opus 5 High');
   assert.equal(picks.mechanical.sonnet, 'Sonnet 5');
   assert.equal(picks.mechanical.haiku, 'Haiku 4.5');
-  assert.equal(picks.mechanical.grok, 'Grok 4.5 Fast');
+  assert.equal(picks.mechanical.grok, 'Grok 4.7 Fast');
   assert.doesNotMatch(picks.ceiling.join, /Fable/);
   assert.doesNotMatch(picks.high.join, /Fable/);
 });
@@ -67,7 +79,7 @@ test('tool columns put GPT Sol on Cursor Deep, not Claude Code', () => {
   assert.equal(cols.deep.claude, 'Opus 5 High or Max');
   assert.match(cols.deep.cursor, /GPT-5\.6 Sol High/);
   assert.doesNotMatch(cols.deep.claude, /Grok|GPT/);
-  assert.equal(cols.deep.grok, 'Grok 4.6 High');
+  assert.equal(cols.deep.grok, 'Grok 4.7 High');
 });
 
 test('improve table uses ceiling only on /improve deep', () => {
@@ -76,7 +88,7 @@ test('improve table uses ceiling only on /improve deep', () => {
   const deep = table.split('\n').find((l) => l.includes('`/improve deep`'));
   const bare = table.split('\n').find((l) => l.startsWith('| `/improve` |'));
   assert.match(deep, /Opus 5 Max/);
-  assert.match(deep, /Grok 4\.6 Extra High/);
+  assert.match(deep, /Grok 4\.7 Extra High/);
   assert.doesNotMatch(bare, /Extra High/);
   assert.match(bare, /Opus 5 High/);
 });
@@ -108,5 +120,5 @@ test('snapshotFromPage rejects a thin parse', () => {
 test('proposing line names all three tools', () => {
   const line = renderProposingLine(pair(loadSnapshot(ROOT), policy));
   assert.match(line, /^Deep — Opus 5 High or Max · Cursor:/);
-  assert.match(line, /Grok Build: Grok 4\.6 High$/);
+  assert.match(line, /Grok Build: Grok 4\.7 High$/);
 });

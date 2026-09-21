@@ -115,10 +115,14 @@ export function parseLeaderboard(text, policy) {
     );
   }
 
-  const htmlRe =
-    /<t[dh][^>]*>\s*(\d+)\s*<\/t[dh]>\s*<t[dh][^>]*>\s*([^<]+?)\s*<\/t[dh]>\s*<t[dh][^>]*>\s*([\d.]+)\s*%?/gi;
-  for (const m of text.matchAll(htmlRe)) {
-    add(Number(m[1]), m[2], numberish(m[3]), null, null, null);
+  const rowRe = /<tr\b[^>]*>([\s\S]*?)<\/tr>/gi;
+  for (const row of text.matchAll(rowRe)) {
+    const cells = [...row[1].matchAll(/<t[dh]\b[^>]*>([\s\S]*?)<\/t[dh]>/gi)].map((cell) =>
+      decodeEntities(cell[1].replace(/<!--[\s\S]*?-->/g, '').replace(/<[^>]+>/g, ' ')),
+    );
+    const rank = numberish(cells[0]);
+    if (!Number.isInteger(rank)) continue;
+    add(rank, cells[1], numberish(cells[2]), numberish(cells[3]), numberish(cells[4]), numberish(cells[5]));
   }
 
   const rows = [...seen.values()].sort((a, b) => (a.rank ?? 0) - (b.rank ?? 0));
@@ -283,8 +287,29 @@ export function applyRegions(text, regions) {
   return next;
 }
 
-function writeJson(path, value) {
-  writeFileSync(path, `${JSON.stringify(value, null, 2)}\n`);
+function jsonField(value) {
+  return value == null ? 'null' : JSON.stringify(value);
+}
+
+function writeSnapshot(path, snapshot) {
+  const rows = snapshot.rows
+    .map(
+      (row) =>
+        `    { "rank": ${row.rank}, "name": ${jsonField(row.name)}, "family": ${jsonField(row.family)}, "effort": ${jsonField(row.effort)}, "score": ${jsonField(row.score)}, "cost": ${jsonField(row.cost)}, "tokens": ${jsonField(row.tokens)}, "steps": ${jsonField(row.steps)} }`,
+    )
+    .join(',\n');
+  writeFileSync(
+    path,
+    `{
+  "source": ${JSON.stringify(snapshot.source)},
+  "fetchedAt": ${JSON.stringify(snapshot.fetchedAt)},
+  "bench": ${JSON.stringify(snapshot.bench)},
+  "rows": [
+${rows}
+  ]
+}
+`,
+  );
 }
 
 export async function fetchCursorBench(fetcher = fetch) {
@@ -366,7 +391,7 @@ export async function refreshModels({ root = ROOT, fetchPage = true, fetcher = f
     try {
       const text = await fetchCursorBench(fetcher);
       snapshot = snapshotFromPage(text, policy);
-      writeJson(join(root, 'data', 'benchmarks.json'), snapshot);
+      writeSnapshot(join(root, 'data', 'benchmarks.json'), snapshot);
       fetched = true;
       log.log(`✓ CursorBench ${snapshot.bench} (${snapshot.rows.length} rows)`);
     } catch (err) {

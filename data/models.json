@@ -37,7 +37,7 @@
   },
   "fallbacks": {
     "haiku": "Haiku 4.5",
-    "grok-fast": "Grok 4.5 Fast"
+    "grok-fast": "Grok 4.7 Fast"
   },
   "improve": [
     { "command": "`/improve`", "what": "cheap pass, hotspots, top findings (default)", "role": "high" },

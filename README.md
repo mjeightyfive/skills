@@ -59,15 +59,15 @@ knobs. Names below come from [docs/models.md](docs/models.md) and refresh with
 <!-- skills:models:improve-runs:begin -->
 | Command | What | Run as |
 |---|---|---|
-| `/improve` | cheap pass, hotspots, top findings (default) | Opus 5 High · Grok 4.6 High · GPT-5.6 Sol High |
-| `/improve deep` | every package, every category | Opus 5 Max · Grok 4.6 Extra High · GPT-5.6 Sol Max |
-| `/improve security` | one category (also: perf, tests, bugs, …) | Opus 5 High · Grok 4.6 High · GPT-5.6 Sol High |
-| `/improve branch` | only what the current branch changes | Opus 5 High · Grok 4.6 High · GPT-5.6 Sol High |
-| `/improve next` | feature suggestions | Opus 5 High · Grok 4.6 High · GPT-5.6 Sol High |
-| `/improve plan <description>` | skip the audit, spec one thing | Opus 5 High · Grok 4.6 High · GPT-5.6 Sol High |
-| `/improve review-plan <file>` | critique and tighten an existing plan | Opus 5 Medium · Composer 2.5 · Grok 4.6 Medium · GPT-5.6 Sol Medium |
-| `/improve reconcile` | refresh the backlog | Opus 5 Medium · Composer 2.5 · Grok 4.6 Medium · GPT-5.6 Sol Medium |
-| implement `plans/NNN-*.md` | execute a written plan | Sonnet 5 · Haiku 4.5 · Composer 2.5 · Grok 4.5 Fast |
+| `/improve` | cheap pass, hotspots, top findings (default) | Opus 5 High · Grok 4.7 High · GPT-5.6 Sol High |
+| `/improve deep` | every package, every category | Opus 5 Max · Grok 4.7 Extra High · GPT-5.6 Sol Max |
+| `/improve security` | one category (also: perf, tests, bugs, …) | Opus 5 High · Grok 4.7 High · GPT-5.6 Sol High |
+| `/improve branch` | only what the current branch changes | Opus 5 High · Grok 4.7 High · GPT-5.6 Sol High |
+| `/improve next` | feature suggestions | Opus 5 High · Grok 4.7 High · GPT-5.6 Sol High |
+| `/improve plan <description>` | skip the audit, spec one thing | Opus 5 High · Grok 4.7 High · GPT-5.6 Sol High |
+| `/improve review-plan <file>` | critique and tighten an existing plan | Opus 5 Medium · Composer 2.5 · Grok 4.7 Medium · GPT-5.6 Sol Medium |
+| `/improve reconcile` | refresh the backlog | Opus 5 Medium · Composer 2.5 · Grok 4.7 Medium · GPT-5.6 Sol Medium |
+| implement `plans/NNN-*.md` | execute a written plan | Sonnet 5 · Haiku 4.5 · Composer 2.5 · Grok 4.7 Fast |
 <!-- skills:models:improve-runs:end -->
 
 1. **(optional) Plan mode** — `Shift+Tab` (Claude: `/plan`). Recon, questions, findings
@@ -75,16 +75,16 @@ knobs. Names below come from [docs/models.md](docs/models.md) and refresh with
    edits. Cursor's plan file is a this-session artifact, not `plans/*.md`. Skip on Grok, or
    when already in Agent.
 2. **Write the handoff** — Agent,
-   <!-- skills:models:role-high:begin -->Opus 5 High · Grok 4.6 High · GPT-5.6 Sol High<!-- skills:models:role-high:end -->.
+   <!-- skills:models:role-high:begin -->Opus 5 High · Grok 4.7 High · GPT-5.6 Sol High<!-- skills:models:role-high:end -->.
    `/improve plan add a --json flag to the list command, matching existing output flags` —
    or, after a bare `/improve` findings table, "plan 1, 3 and 5". Leave Plan mode first; it
    blocks the writes. Skip only when this same capable session should implement after Plan
    mode.
 3. **(optional) Review** —
-   <!-- skills:models:role-medium:begin -->Opus 5 Medium · Composer 2.5 · Grok 4.6 Medium · GPT-5.6 Sol Medium<!-- skills:models:role-medium:end -->.
+   <!-- skills:models:role-medium:begin -->Opus 5 Medium · Composer 2.5 · Grok 4.7 Medium · GPT-5.6 Sol Medium<!-- skills:models:role-medium:end -->.
    `/improve review-plan plans/001-json-list-flag.md`. Skip if the file already looks tight.
 4. **Implement** — **new session**, Agent (not Plan mode),
-   <!-- skills:models:role-mechanical:begin -->Sonnet 5 · Haiku 4.5 · Composer 2.5 · Grok 4.5 Fast<!-- skills:models:role-mechanical:end -->.
+   <!-- skills:models:role-mechanical:begin -->Sonnet 5 · Haiku 4.5 · Composer 2.5 · Grok 4.7 Fast<!-- skills:models:role-mechanical:end -->.
    `implement plans/001-json-list-flag.md`. Plan mode here would re-plan a spec that is
    already written.
 5. **(optional) Reconcile** — later, same models as review. `/improve reconcile`. Skip
@@ -92,7 +92,7 @@ knobs. Names below come from [docs/models.md](docs/models.md) and refresh with
 
 A full audit is the same loop with `/improve` (or `/improve deep` / `/improve branch`) at
 step 2 instead of `/improve plan`. `/improve deep` uses
-<!-- skills:models:role-ceiling:begin -->Opus 5 Max · Grok 4.6 Extra High · GPT-5.6 Sol Max<!-- skills:models:role-ceiling:end -->.
+<!-- skills:models:role-ceiling:begin -->Opus 5 Max · Grok 4.7 Extra High · GPT-5.6 Sol Max<!-- skills:models:role-ceiling:end -->.
 `/improve branch` before a PR.
 
 ## Staying current

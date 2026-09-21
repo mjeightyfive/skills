@@ -40,19 +40,19 @@ More than one task means a table before the first prompt:
 | # | Step | Tier | Claude Code | Cursor | Grok Build |
 |---|---|---|---|---|---|
 
-A single task carries the same information on one line — `<!-- skills:models:proposing-line:begin -->Deep — Opus 5 High or Max · Cursor: Opus 5 High · Grok 4.6 High · GPT-5.6 Sol High · Grok Build: Grok 4.6 High<!-- skills:models:proposing-line:end -->`. A step that needs no model at all, such
+A single task carries the same information on one line — `<!-- skills:models:proposing-line:begin -->Deep — Opus 5 High or Max · Cursor: Opus 5 High · Grok 4.7 High · GPT-5.6 Sol High · Grok Build: Grok 4.7 High<!-- skills:models:proposing-line:end -->`. A step that needs no model at all, such
 as running a gate or a commit, is listed as "no model" rather than left out.
 
 <!-- skills:models:effort-table:begin -->
 | Tier | Work | Claude Code | Cursor | Grok Build |
 |---|---|---|---|---|
-| Deep | Architecture, multi-file refactor, repo audits, debugging that resists a first guess | Opus 5 High or Max | Opus 5 High · Grok 4.6 High · GPT-5.6 Sol High | Grok 4.6 High |
-| Standard | Feature work against a clear spec, a contained fix, a review | Opus 5 Medium | Composer 2.5 · Grok 4.6 Medium · GPT-5.6 Sol Medium | Grok 4.6 Medium |
-| Mechanical | Renames, file moves, config edits, executing an already-written plan | Sonnet 5 · Haiku 4.5 | Composer 2.5 | Grok 4.5 Fast |
+| Deep | Architecture, multi-file refactor, repo audits, debugging that resists a first guess | Opus 5 High or Max | Opus 5 High · Grok 4.7 High · GPT-5.6 Sol High | Grok 4.7 High |
+| Standard | Feature work against a clear spec, a contained fix, a review | Opus 5 Medium | Composer 2.5 · Grok 4.7 Medium · GPT-5.6 Sol Medium | Grok 4.7 Medium |
+| Mechanical | Renames, file moves, config edits, executing an already-written plan | Sonnet 5 · Haiku 4.5 | Composer 2.5 | Grok 4.7 Fast |
 <!-- skills:models:effort-table:end -->
 
 Three caveats that bite in practice. Cursor's effort switching needs Pro or higher, below
-which Grok 4.5 and 4.6 pin to medium and the Deep row collapses into Standard. Composer 2.5
+which Grok 4.5, 4.6, and 4.7 pin to medium and the Deep row collapses into Standard. Composer 2.5
 calibrates its own effort from the task, which makes it a poor fit for Deep, where the point
 is forcing more work than the task appears to need. And enforcement does not travel: moving a
 step from Claude Code to Cursor or Codex drops `permissions.deny` and leaves only the prose
