@@ -8,14 +8,15 @@ Where each tool reads from, how the policy is enforced there, and which model to
 
 | Agent | Skills | Instructions | Enforcement |
 |---|---|---|---|
-| Claude Code | `.claude/skills/` → symlink | `CLAUDE.md`, `AGENTS.md` | `.claude/settings.json` `permissions.deny` |
+| Claude Code | `.claude/skills/` → symlink | `CLAUDE.md` | `.claude/settings.json` `permissions.deny` |
 | Grok Build | `.grok/skills/` → symlink, and `.agents/skills/` directly | `AGENTS.md`, and it also reads `CLAUDE.md` and `.claude/` | `.grok/settings.json`; `grok inspect` shows what was picked up |
 | Cursor | `.agents/skills/` directly | `AGENTS.md`, `.cursor/rules/*.mdc` | allowlist Run Mode (global setting, not a repo file) |
 | Codex | `.agents/skills/` directly | `AGENTS.md` | sandbox mode |
 
 Grok reading `.claude/` and `CLAUDE.md` unprompted is the quiet win here: a repo set up for
-Claude Code is already set up for Grok. Cursor and Codex need `AGENTS.md`, which the template
-provides.
+Claude Code is already set up for Grok. Claude Code loads this policy only when `CLAUDE.md` is a
+symlink to `AGENTS.md` or contains `@AGENTS.md`. Cursor and Codex read `AGENTS.md`, which the
+template provides.
 
 ## Enforcement is not portable
 
@@ -84,9 +85,12 @@ Notes that bite in practice:
   makes it a poor fit for the Deep tier, where you want to force more work than the task
   appears to need.
 - The `improve` skill is explicit-invoke and read-only. Advisor commands use the High knobs
-  (`/improve deep` uses Ceiling). That split — expensive model writes `plans/`, cheaper one
+  (`/improve deep` uses Opus High, with Grok Extra High and Sol Max). That split — expensive model writes `plans/`, cheaper one
   executes them — is the whole point. Plan mode is an optional harness in the
   [README runbook](../README.md#using-improve), not a substitute for the plan file.
+- Opus Low on the mechanical row beats Sonnet on CursorBench. Per-task API cost may not match what a subscription actually allows.
+- Fast mode is worth it for Plan-mode back-and-forth. Leave it off for `/improve deep` and for runs nobody watches.
+- Before `/improve security` or `/improve deep`, set "Switch models when a message is flagged" to ask first. Anything written after a switch came from the older model.
 
 ## Switching tools mid-task
 

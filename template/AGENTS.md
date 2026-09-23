@@ -61,7 +61,34 @@ above, so say so when a step runs near git.
 The prompt text itself is portable. Write it once; only the model, the effort and the
 enforcement differ between tools.
 
+Every handed-off prompt names its finish line, and when to stop and report.
+
 <!-- skills:policy:proposing-work:end -->
+
+<!-- skills:policy:long-runs:begin -->
+
+## Long runs
+
+Keep going until the named finish line. Stop only when blocked, or at a stop the author, a plan, or a skill has named. Print destructive steps. Keep the task list in a file in the repo so a later session can resume it.
+
+A request to pair reverses this for the session: pause at each step and wait.
+
+<!-- skills:policy:long-runs:end -->
+
+<!-- skills:policy:reporting-back:begin -->
+
+## Reporting back
+
+End a run with these headings:
+
+- **Needs you** — decisions or actions only the author can take.
+- **Changed** — files touched and what changed.
+- **Found** — anything learned that was not a change.
+- **Not verified** — checks that did not run, and why.
+
+A review lists only what would block the merge. For each item give the file and line, why it is wrong, and how to show it fails. A security finding states what the failing test asserts, with no payload.
+
+<!-- skills:policy:reporting-back:end -->
 
 ## Skills
 

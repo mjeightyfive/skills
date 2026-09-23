@@ -152,9 +152,11 @@ function findMarked(text, id) {
   const endMarker = POLICY_END(id);
   const endIdx = text.indexOf(endMarker, m.index + m[0].length);
   if (endIdx === -1) return { unclosed: true, start: m.index };
+  let end = endIdx + endMarker.length;
+  if (text[end] === '\n') end += 1;
   return {
     start: m.index,
-    end: endIdx + endMarker.length,
+    end,
     hash: m[1] ?? null,
     inner: text.slice(m.index + m[0].length, endIdx),
   };
@@ -242,7 +244,9 @@ function splice(text, start, end, chunk) {
 }
 
 function insertAt(text, index, chunk) {
-  return join(text.slice(0, index), chunk, text.slice(index));
+  let before = text.slice(0, index);
+  if (before && !before.endsWith('\n\n')) before = before.endsWith('\n') ? before + '\n' : before + '\n\n';
+  return join(before, chunk, text.slice(index));
 }
 
 function join(before, block, after) {

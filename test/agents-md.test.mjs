@@ -48,7 +48,7 @@ test('template declares named policy sections', () => {
   const sections = parsePolicySections(TEMPLATE);
   assert.deepEqual(
     sections.map((s) => s.id),
-    ['proposing-work'],
+    ['proposing-work', 'long-runs', 'reporting-back'],
   );
   assert.equal(sections[0].title, 'Proposing work');
 });
@@ -275,4 +275,20 @@ ${ROUTING}
   assert.equal((next.match(/## Skills/g) ?? []).length, 1);
   assert.match(next, /Project-specific skill notes\.\n\n<!-- skills:policy:proposing-work:begin/);
   assert.match(next, /<!-- skills:policy:proposing-work:end -->\n\n<!-- skills:begin -->/);
+});
+
+test('syncing a rendered section twice does not grow it', () => {
+  const once = sync('# Intro\n\n## Elsewhere\n\nKeep.\n\n' + ROUTING);
+  const twice = sync(once.body);
+  assert.equal(twice.body, once.body);
+  assert.deepEqual(twice.notes, []);
+});
+
+test('a second inserted section has a blank line before it', () => {
+  const sections = sectionsFrom(
+    ['alpha', '## Alpha\n\nFirst.\n'],
+    ['beta', '## Beta\n\nSecond.\n'],
+  );
+  const { body } = sync('# Intro\n\n## Skills\n\nNotes.\n\n' + ROUTING, { sections });
+  assert.match(body, /<!-- skills:policy:alpha:end -->\n\n<!-- skills:policy:beta:begin/);
 });

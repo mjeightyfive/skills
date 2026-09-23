@@ -16,6 +16,7 @@
       "Bash(git stash:*)",
       "Bash(git tag:*)",
       "Bash(git rm:*)",
+      "Bash(git clean:*)",
       "Bash(gh pr create:*)",
       "Bash(gh pr merge:*)",
       "Bash(gh release:*)",
@@ -29,6 +30,11 @@
       "Bash(git show:*)",
       "Bash(git blame:*)",
       "Bash(git ls-files:*)"
+    ],
+    "ask": [
+      "Bash(rm -r:*)",
+      "Bash(rm -rf:*)",
+      "Bash(rm --recursive:*)"
     ]
   }
 }

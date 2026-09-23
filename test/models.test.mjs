@@ -7,7 +7,6 @@ import {
   applyRegion,
   classifyFamily,
   loadPolicy,
-  loadSnapshot,
   pair,
   parseLeaderboard,
   parseModelName,
@@ -20,6 +19,9 @@ import {
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const FIXTURES = join(ROOT, 'test', 'fixtures');
+function frozenBoard() {
+  return JSON.parse(readFileSync(join(FIXTURES, 'benchmarks.json'), 'utf8'));
+}
 const policy = loadPolicy(ROOT);
 
 test('parses Extra High before High', () => {
@@ -60,13 +62,13 @@ test('parses an HTML table and strips a Claude prefix', () => {
 });
 
 test('pairs pinned families and ignores Fable', () => {
-  const snapshot = loadSnapshot(ROOT);
+  const snapshot = frozenBoard();
   const picks = pair(snapshot, policy);
-  assert.equal(picks.ceiling.opus, 'Opus 5 Max');
+  assert.equal(picks.ceiling.opus, 'Opus 5 High');
   assert.equal(picks.ceiling.grok, 'Grok 4.7 Extra High');
   assert.equal(picks.ceiling.sol, 'GPT-5.6 Sol Max');
   assert.equal(picks.high.opus, 'Opus 5 High');
-  assert.equal(picks.mechanical.sonnet, 'Sonnet 5');
+  assert.equal(picks.mechanical.opus, 'Opus 5 Low');
   assert.equal(picks.mechanical.haiku, 'Haiku 4.5');
   assert.equal(picks.mechanical.grok, 'Grok 4.7 Fast');
   assert.doesNotMatch(picks.ceiling.join, /Fable/);
@@ -74,20 +76,21 @@ test('pairs pinned families and ignores Fable', () => {
 });
 
 test('tool columns put GPT Sol on Cursor Deep, not Claude Code', () => {
-  const picks = pair(loadSnapshot(ROOT), policy);
+  const picks = pair(frozenBoard(), policy);
   const cols = toolColumns(picks);
-  assert.equal(cols.deep.claude, 'Opus 5 High or Max');
+  assert.equal(cols.deep.claude, 'Opus 5 High');
+  assert.match(cols.standard.cursor, /^Opus 5 Medium · Composer 2\.5/);
   assert.match(cols.deep.cursor, /GPT-5\.6 Sol High/);
   assert.doesNotMatch(cols.deep.claude, /Grok|GPT/);
   assert.equal(cols.deep.grok, 'Grok 4.7 High');
 });
 
 test('improve table uses ceiling only on /improve deep', () => {
-  const picks = pair(loadSnapshot(ROOT), policy);
+  const picks = pair(frozenBoard(), policy);
   const table = renderImproveTable(picks, policy);
   const deep = table.split('\n').find((l) => l.includes('`/improve deep`'));
   const bare = table.split('\n').find((l) => l.startsWith('| `/improve` |'));
-  assert.match(deep, /Opus 5 Max/);
+  assert.match(deep, /Opus 5 High/);
   assert.match(deep, /Grok 4\.7 Extra High/);
   assert.doesNotMatch(bare, /Extra High/);
   assert.match(bare, /Opus 5 High/);
@@ -118,7 +121,7 @@ test('snapshotFromPage rejects a thin parse', () => {
 });
 
 test('proposing line names all three tools', () => {
-  const line = renderProposingLine(pair(loadSnapshot(ROOT), policy));
-  assert.match(line, /^Deep — Opus 5 High or Max · Cursor:/);
+  const line = renderProposingLine(pair(frozenBoard(), policy));
+  assert.match(line, /^Deep — Opus 5 High · Cursor:/);
   assert.match(line, /Grok Build: Grok 4\.7 High$/);
 });

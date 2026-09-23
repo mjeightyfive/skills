@@ -93,13 +93,18 @@ executor's environment. Skip the section otherwise.)
   changing it wastes effort and risks the v1 clients still pinned to it.
 - Any change to the public response shape — clients depend on it.
 
+## UI
+
+Include this section only when the plan changes a visible interface.
+
+- Tie every visual choice to a token, component, or pattern already in the repo, and name the file it comes from.
+- Name the patterns this plan will not introduce.
+
 ## Git workflow
 
-(Filled from recon — match the repo's observed conventions.)
-
-- Branch: match the repo's own observed naming convention (`git branch -a`, `git log`). If none is evident, ask the operator. Never use a branch name referencing tooling or an agent.
-- Commit per step or per logical unit; message style: <match repo, e.g. conventional commits — include an example from `git log`>
-- Do NOT push or open a PR unless the operator instructed it.
+- Do not create or switch branches. Work on the current branch. If this work needs its own branch, print the `git switch -c` command and stop.
+- Do not commit. When the plan is finished, print one `git add` of the in-scope paths and one `git commit`. Take the message style from `git log`.
+- Do not push or open a PR.
 
 ## Steps
 
@@ -127,12 +132,12 @@ callers, then remove old path.)
 
 ## Done criteria
 
-Machine-checkable. ALL must hold:
+Machine-checkable. ALL must hold. Check a box only after that command was run and its result recorded:
 
 - [ ] `pnpm typecheck` exits 0
 - [ ] `pnpm test` exits 0; new tests for <X> exist and pass
 - [ ] `grep -rn "<old pattern>" src/` returns no matches
-- [ ] No files outside the in-scope list are modified (`git status`)
+- [ ] `git diff -- src/orders/api.ts src/orders/api.test.ts` shows only this plan's edits. Other dirty paths stay untouched
 - [ ] `plans/README.md` status row updated
 
 ## STOP conditions
@@ -144,6 +149,13 @@ Stop and report back (do not improvise) if:
 - A step's verification fails twice after a reasonable fix attempt.
 - The fix appears to require touching an out-of-scope file.
 - You discover the assumption "<key assumption>" is false.
+
+## Report back
+
+- **Needs you** — decisions or actions only the author can take.
+- **Changed** — files touched and what changed.
+- **Found** — anything learned that was not a change.
+- **Not verified** — checks that did not run, and why.
 
 ## Maintenance notes
 
@@ -175,7 +187,7 @@ honor its STOP conditions, and update your row when done.
 | 001  | ...   | P1       | S      | —          | TODO   |
 | 002  | ...   | P1       | M      | 001        | TODO   |
 
-Status values: TODO | IN PROGRESS | DONE | BLOCKED (with one-line reason) | REJECTED (with one-line rationale — finding fixed independently or approach abandoned)
+Status values: `TODO` | `IN PROGRESS — steps 1–N verified` | `BLOCKED — <reason>` | `DONE` | `REJECTED — <reason>`. The executor updates its own row as it goes. On resume, read that row and start at the first step it does not list as verified. `DONE` means every done criterion was run.
 
 ## Dependency notes
 

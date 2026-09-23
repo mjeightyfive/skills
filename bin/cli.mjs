@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { execFileSync } from 'node:child_process';
-import { existsSync, mkdirSync, readFileSync, writeFileSync, cpSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync, cpSync, lstatSync, readlinkSync, symlinkSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parsePolicySections, syncAgentsMd, ROUTING_BEGIN, ROUTING_END } from './agents-md.mjs';
@@ -155,6 +155,21 @@ export function writeAgents(profileName) {
 }
 
 // ---------------------------------------------------------------- template
+
+function warnClaudeLink() {
+  const claude = join(CWD, 'CLAUDE.md');
+  if (!existsSync(claude)) {
+    console.error(c.yellow('warn') + ' CLAUDE.md is missing, so Claude Code will not load AGENTS.md');
+    return;
+  }
+  if (lstatSync(claude).isSymbolicLink()) {
+    const target = readlinkSync(claude);
+    if (target === 'AGENTS.md' || target.endsWith('/AGENTS.md')) return;
+  } else if (readFileSync(claude, 'utf8').includes('@AGENTS.md')) {
+    return;
+  }
+  console.error(c.yellow('warn') + ' CLAUDE.md does not import AGENTS.md (symlink or @AGENTS.md). Claude Code will not load the policy sections');
+}
 
 function seedTemplate() {
   const pairs = [
@@ -331,11 +346,18 @@ if (invokedDirectly) {
 
   switch (command) {
     case 'init': {
+      const hadAgents = existsSync(join(CWD, 'AGENTS.md'));
+      const hadClaude = existsSync(join(CWD, 'CLAUDE.md'));
       console.log(`${c.bold('Installing')} profile ${c.cyan(profile)} for ${c.dim(agents.join(', '))}`);
       install(groupBySource(resolveProfile(profile)), { agents, local });
       console.log();
       seedTemplate();
       writeAgents(profile);
+      if (!hadAgents && !hadClaude) {
+        symlinkSync('AGENTS.md', join(CWD, 'CLAUDE.md'));
+        console.log(c.green('✓') + ' CLAUDE.md → AGENTS.md');
+      }
+      warnClaudeLink();
       console.log(`\n${c.green('Done.')} ${c.dim('Commit skills-lock.json and .agents/skills so the set is reproducible.')}`);
       break;
     }
@@ -354,6 +376,7 @@ if (invokedDirectly) {
         die('`skills update` failed');
       }
       writeAgents(profile);
+      warnClaudeLink();
       console.log(`\n${c.dim('Now run')} skills-setup audit ${c.dim('to catch skills upstream added since you last looked.')}`);
       break;
     }

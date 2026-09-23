@@ -165,27 +165,20 @@ export function joinNames(names) {
   return names.filter(Boolean).join(' · ');
 }
 
-function sameBase(a, b) {
-  return parseModelName(a).base === parseModelName(b).base;
-}
-
 export function toolColumns(picks) {
-  const claudeDeep = sameBase(picks.high.opus, picks.ceiling.opus)
-    ? `${parseModelName(picks.high.opus).base} High or Max`
-    : `${picks.high.opus} or ${picks.ceiling.opus}`;
   return {
     deep: {
-      claude: claudeDeep,
+      claude: picks.high.opus,
       cursor: joinNames([picks.high.opus, picks.high.grok, picks.high.sol]),
       grok: picks.high.grok,
     },
     standard: {
       claude: picks.medium.opus,
-      cursor: joinNames([picks.medium.composer, picks.medium.grok, picks.medium.sol]),
+      cursor: joinNames([picks.medium.opus, picks.medium.composer, picks.medium.grok, picks.medium.sol]),
       grok: picks.medium.grok,
     },
     mechanical: {
-      claude: joinNames([picks.mechanical.sonnet, picks.mechanical.haiku]),
+      claude: joinNames([picks.mechanical.opus, picks.mechanical.haiku]),
       cursor: picks.mechanical.composer,
       grok: picks.mechanical.grok,
     },
