@@ -86,6 +86,8 @@ End a run with these headings:
 - **Found** — anything learned that was not a change.
 - **Not verified** — checks that did not run, and why.
 
+When the run leaves a diff uncommitted, end the reply with copy-pasteable `git add` (explicit paths only, never `git add -A` or `git add .`), `git commit`, and `git push` for that diff. Saying the commands were understood is not a substitute for printing them.
+
 A review lists only what would block the merge. For each item give the file and line, why it is wrong, and how to show it fails. A security finding states what the failing test asserts, with no payload.
 
 <!-- skills:policy:reporting-back:end -->
