@@ -72,9 +72,9 @@ Work splits into three tiers. The table maps them across the three tools; names 
 <!-- skills:models:effort-table:begin -->
 | Tier | Work | Claude Code | Cursor | Grok Build |
 |---|---|---|---|---|
-| Deep | Architecture, multi-file refactor, repo audits, debugging something that resists a first guess | Opus 5 High or Max | Opus 5 High · Grok 4.7 High · GPT-5.6 Sol High | Grok 4.7 High |
-| Standard | Feature work against a clear spec, a contained bug fix, a review | Opus 5 Medium | Composer 2.5 · Grok 4.7 Medium · GPT-5.6 Sol Medium | Grok 4.7 Medium |
-| Mechanical | Renames, file moves, config edits, boilerplate, anything where the answer is already decided | Sonnet 5 · Haiku 4.5 | Composer 2.5 | Grok 4.7 Fast |
+| Deep | Architecture, multi-file refactor, repo audits, debugging something that resists a first guess | Opus 5.5 High | Opus 5.5 High · Grok 4.7 High · GPT-5.6 Sol High | Grok 4.7 High |
+| Standard | Feature work against a clear spec, a contained bug fix, a review | Opus 5.5 Medium | Opus 5.5 Medium · Composer 2.5 · Grok 4.7 Medium · GPT-5.6 Sol Medium | Grok 4.7 Medium |
+| Mechanical | Renames, file moves, config edits, boilerplate, anything where the answer is already decided | Opus 5.5 Low · Haiku 4.5 | Composer 2.5 | Grok 4.7 Fast |
 <!-- skills:models:effort-table:end -->
 
 Notes that bite in practice:
