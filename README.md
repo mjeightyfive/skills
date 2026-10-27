@@ -33,8 +33,9 @@ profile installs it, and — for everything not installed — why not.
 
 When two skills compete for the same trigger, precedence runs mine, then Vercel, then everyone
 else — and within that bottom tier, one owner per domain: Emil owns motion, Jakub owns static
-interface. Policy beats precedence: `deploy-to-vercel` is tier 2 and still excluded, because it
-instructs the agent to run `git commit` and `git push`.
+interface, and the Karpathy guidelines own coding behaviour. Policy beats precedence:
+`deploy-to-vercel` is tier 2 and still excluded, because it instructs the agent to run
+`git commit` and `git push`.
 
 Skills with `disable-model-invocation: true` never compete, because the model cannot fire them
 — only you can, by name. That is why `prototype` and `variant` both stay despite doing the same

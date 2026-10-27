@@ -56,6 +56,11 @@ cd ~/Dev/exy && git add skills-lock.json .agents/skills .claude/skills AGENTS.md
 and the generated `AGENTS.md` block is rewritten to claim the web set. The installed skills stay
 correct — it is the block that lies. Read the `AGENTS.md` diff before committing.
 
+**`update` never installs a skill a profile gained.** It refreshes what `skills-lock.json` already
+lists and regenerates `AGENTS.md`, so the routing block starts counting a skill that is not
+there. When a profile gains a skill, run `init --profile <name>` in each consumer instead. It
+leaves existing policy files alone and rewrites the same blocks `update` does.
+
 **Named policy sections regenerate the same way, except they will not overwrite a local edit.**
 A section whose text is still what the CLI last wrote is replaced from `template/AGENTS.md`. A
 section the author has edited is left alone; if the template also moved, `update` exits

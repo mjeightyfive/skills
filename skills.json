@@ -33,6 +33,12 @@
       "label": "Jakub Krehel",
       "owns": ["static interface"]
     },
+    "karpathy": {
+      "repo": "multica-ai/andrej-karpathy-skills",
+      "tier": 3,
+      "label": "Karpathy guidelines",
+      "owns": ["coding behaviour"]
+    },
     "find": {
       "repo": "vercel-labs/skills",
       "tier": 2,
@@ -43,7 +49,7 @@
   "profiles": {
     "core": {
       "description": "Any repository, any stack.",
-      "skills": ["mine/improve", "vercel/writing-guidelines"]
+      "skills": ["mine/improve", "vercel/writing-guidelines", "karpathy/karpathy-guidelines"]
     },
     "web": {
       "description": "React, Next.js, Tailwind. The mje.fi profile.",
@@ -135,6 +141,11 @@
       "domain": "repo-wide audit producing plan files",
       "owner": "mine",
       "rule": "mine/improve is explicit-invoke only and covers the whole repo. emil/improve-animations auto-triggers and covers motion alone. They share an output shape, not a scope."
+    },
+    {
+      "domain": "coding behaviour",
+      "owner": "karpathy",
+      "rule": "karpathy/karpathy-guidelines governs how a change is made: assumptions, size, what it may touch, how it is verified. vercel/react-best-practices fires on the same \"writing, reviewing, or refactoring\" trigger and governs React and Next patterns. They share a trigger, not a job. Where the guidelines say stop and ask, Long runs still holds: ask before the first edit, and mid-run stop only for a question the code cannot answer."
     }
   ]
 }
