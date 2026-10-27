@@ -68,7 +68,10 @@
         "jakub/explain-interface",
         "jakub/interface-review",
         "jakub/variant",
+        "jakub/build-design",
+        "jakub/state-machine",
         "emil/animate",
+        "emil/animation-performance",
         "emil/animation-vocabulary",
         "emil/apple-design",
         "emil/find-animation-opportunities",
@@ -122,9 +125,18 @@
       "losesTo": "jakub/interface-review",
       "note": "interface-review is the same review, explicit-invoke only, so it never competes for a trigger."
     },
+    "jakub/teardown": {
+      "reason": "Technical illustration of physical objects, not interface work, and no project in the set draws them. Auto-triggers, and ships its own render and test scripts.",
+      "recheck": "Include the day a project needs technical illustrations."
+    },
     "emil/emil-design-eng": {
       "reason": "Auto-triggering umbrella over Emil's own set. Overlaps animate, review-animations and better-ui without adding a distinct job.",
       "losesTo": "emil/animate"
+    },
+    "emil/break-ui": {
+      "reason": "Same job as jakub/break — worst-case data on a throwaway page — but auto-triggers on \"stress-test\" and \"find edge cases\", taking the request from the explicit-invoke break. Static interface is Jakub's domain.",
+      "losesTo": "jakub/break",
+      "recheck": "If break's scenarios miss values that break-ui's CATALOG.md covers, swap."
     },
     "emil/ask-sonner": {
       "reason": "Sonner is not in the stack.",
