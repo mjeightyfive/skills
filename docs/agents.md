@@ -9,7 +9,7 @@ Where each tool reads from, how the policy is enforced there, and which model to
 | Agent | Skills | Instructions | Enforcement |
 |---|---|---|---|
 | Claude Code | `.claude/skills/` → symlink | `CLAUDE.md` | `.claude/settings.json` `permissions.deny` |
-| Grok Build | `.grok/skills/` → symlink, and `.agents/skills/` directly | `AGENTS.md`, and it also reads `CLAUDE.md` and `.claude/` | `.grok/settings.json`; `grok inspect` shows what was picked up |
+| Grok Build | `.grok/skills/` → symlink, and `.agents/skills/` directly | `AGENTS.md`, and it also reads `CLAUDE.md` and `.claude/` | `.grok/config.toml` `[permission]` rules; `grok inspect` shows what was picked up |
 | Cursor | `.agents/skills/` directly | `AGENTS.md`, `.cursor/rules/*.mdc` | allowlist Run Mode (global setting, not a repo file) |
 | Codex | `.agents/skills/` directly | `AGENTS.md` | sandbox mode |
 
@@ -31,7 +31,11 @@ differently:
   instead: permit `git status`, `git diff`, `git log`, `git show`, `git blame` and the project's
   test and build commands, and let everything else prompt. It is a global setting, so it is set
   once per machine, not per repo.
-- **Grok Build** — `.grok/settings.json` per project. It also honours `.claude/` hooks.
+- **Grok Build** — `[permission]` rules in `.grok/config.toml` per project, and the template
+  ships them, mirroring the Claude deny and allow lists. `deny` wins over `allow` and still
+  applies under always-approve. Grok also reads hook files from `.claude/settings.json`, but
+  project hooks run only once trusted (`/hooks-trust` or `--trust`), and its docs do not say it
+  reads `permissions.deny` there — hence the separate file.
 
 Treat all three as guardrails, not sandboxes. The reason the rule is also written into
 `AGENTS.md` is that the guardrail catches the obvious spelling and the prose catches the intent.

@@ -1,0 +1,31 @@
+# The Grok Build side of the git rule in AGENTS.md. Mirrors permissions.deny in
+# .claude/settings.json; deny wins over allow and still applies under always-approve.
+[permission]
+rules = [
+  { action = "deny", tool = "bash", pattern = "git commit*" },
+  { action = "deny", tool = "bash", pattern = "git add*" },
+  { action = "deny", tool = "bash", pattern = "git push*" },
+  { action = "deny", tool = "bash", pattern = "git reset*" },
+  { action = "deny", tool = "bash", pattern = "git restore*" },
+  { action = "deny", tool = "bash", pattern = "git checkout*" },
+  { action = "deny", tool = "bash", pattern = "git switch*" },
+  { action = "deny", tool = "bash", pattern = "git branch*" },
+  { action = "deny", tool = "bash", pattern = "git rebase*" },
+  { action = "deny", tool = "bash", pattern = "git merge*" },
+  { action = "deny", tool = "bash", pattern = "git cherry-pick*" },
+  { action = "deny", tool = "bash", pattern = "git stash*" },
+  { action = "deny", tool = "bash", pattern = "git tag*" },
+  { action = "deny", tool = "bash", pattern = "git rm*" },
+  { action = "deny", tool = "bash", pattern = "git clean*" },
+  { action = "deny", tool = "bash", pattern = "gh pr create*" },
+  { action = "deny", tool = "bash", pattern = "gh pr merge*" },
+  { action = "deny", tool = "bash", pattern = "gh release*" },
+  { action = "deny", tool = "bash", pattern = "vercel deploy*" },
+  { action = "deny", tool = "bash", pattern = "vercel --prod*" },
+  { action = "allow", tool = "bash", pattern = "git status*" },
+  { action = "allow", tool = "bash", pattern = "git diff*" },
+  { action = "allow", tool = "bash", pattern = "git log*" },
+  { action = "allow", tool = "bash", pattern = "git show*" },
+  { action = "allow", tool = "bash", pattern = "git blame*" },
+  { action = "allow", tool = "bash", pattern = "git ls-files*" },
+]

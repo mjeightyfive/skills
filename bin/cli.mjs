@@ -171,15 +171,16 @@ function warnClaudeLink() {
   console.error(c.yellow('warn') + ' CLAUDE.md does not import AGENTS.md (symlink or @AGENTS.md). Claude Code will not load the policy sections');
 }
 
-function seedTemplate() {
+export function seedTemplate(cwd = CWD) {
   const pairs = [
     ['template/AGENTS.md', 'AGENTS.md'],
     ['template/claude/settings.json', '.claude/settings.json'],
+    ['template/grok/config.toml', '.grok/config.toml'],
     ['template/cursor/rules/engineering-policy.mdc', '.cursor/rules/engineering-policy.mdc'],
   ];
   for (const [from, to] of pairs) {
     const src = join(ROOT, from);
-    const dest = join(CWD, to);
+    const dest = join(cwd, to);
     if (!existsSync(src)) continue;
     if (existsSync(dest)) {
       console.log(`${c.dim('·')} ${to} ${c.dim('exists, left alone')}`);
@@ -194,7 +195,7 @@ function seedTemplate() {
   // one. Skipped when the project has already ruled on these paths, whichever
   // way it ruled.
   const snippet = join(ROOT, 'template/gitignore-snippet');
-  const ignoreFile = join(CWD, '.gitignore');
+  const ignoreFile = join(cwd, '.gitignore');
   if (!existsSync(snippet)) return;
   const current = existsSync(ignoreFile) ? readFileSync(ignoreFile, 'utf8') : '';
   if (current.includes('.claude/settings.json')) {
