@@ -51,8 +51,8 @@ the whole template would either stamp over that or sit in permanent conflict, an
 section like Proposing work could not land without taking the rest. Each portable section is
 its own region, opted in by markers in the template. Unmarked headings in the template are
 still seed-only: copied on first `init`, never merged, same as `settings.json`. Today the
-only opted-in section is Proposing work; Non-negotiable and Skills stay unmarked because
-every consumer has rewritten them.
+opted-in sections are Proposing work, Long runs and Reporting back; Non-negotiable and
+Skills stay unmarked because every consumer has rewritten them.
 
 When a marked section is missing, `update` inserts it before the routing block (or after the
 nearest already-present policy section, so template order holds). When the heading is already
