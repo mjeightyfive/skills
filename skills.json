@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "agents": ["claude-code", "cursor", "grok", "codex", "universal"],
+  "agents": ["claude-code", "cursor", "codex", "universal"],
   "sources": {
     "mine": {
       "repo": "mjeightyfive/skills",
@@ -49,7 +49,7 @@
   "profiles": {
     "core": {
       "description": "Any repository, any stack.",
-      "skills": ["mine/improve", "vercel/writing-guidelines", "karpathy/karpathy-guidelines"]
+      "skills": ["mine/improve", "mine/orchestrate", "vercel/writing-guidelines", "karpathy/karpathy-guidelines"]
     },
     "web": {
       "description": "React, Next.js, Tailwind. The mje.fi profile.",
@@ -79,7 +79,10 @@
         "emil/mobile-native",
         "emil/review-animations",
         "emil/prototype",
-        "emil/pick-ui-library"
+        "emil/pick-ui-library",
+        "emil/choreograph",
+        "emil/gestures",
+        "emil/remove-animations"
       ]
     },
     "cli": {
@@ -125,10 +128,6 @@
       "losesTo": "jakub/interface-review",
       "note": "interface-review is the same review, explicit-invoke only, so it never competes for a trigger."
     },
-    "jakub/teardown": {
-      "reason": "Technical illustration of physical objects, not interface work, and no project in the set draws them. Auto-triggers, and ships its own render and test scripts.",
-      "recheck": "Include the day a project needs technical illustrations."
-    },
     "emil/emil-design-eng": {
       "reason": "Auto-triggering umbrella over Emil's own set. Overlaps animate, review-animations and better-ui without adding a distinct job.",
       "losesTo": "emil/animate"
@@ -141,6 +140,23 @@
     "emil/ask-sonner": {
       "reason": "Sonner is not in the stack.",
       "recheck": "Include the day a project adds the sonner dependency."
+    },
+    "emil/ask-emil": {
+      "reason": "A router over Emil's own set, like the excluded emil/emil-design-eng. It adds a trigger without adding a job.",
+      "losesTo": "emil/animate"
+    },
+    "emil/learn-taste": {
+      "reason": "Writes rules into repository files on its own. Rules here are decided in the manifest and the template, not accumulated by a skill."
+    },
+    "jakub/upskill": {
+      "reason": "Builds skills and hooks outside the manifest, which is the one place that decides what is installed."
+    },
+    "jakub/better-motion": {
+      "reason": "Competes with Emil's skills, who own motion.",
+      "losesTo": "emil/animate"
+    },
+    "jakub/afk": {
+      "reason": "Builds on a local branch, which the branch rule forbids."
     }
   },
   "routing": [
@@ -158,6 +174,11 @@
       "domain": "coding behaviour",
       "owner": "karpathy",
       "rule": "karpathy/karpathy-guidelines governs how a change is made: assumptions, size, what it may touch, how it is verified. vercel/react-best-practices fires on the same \"writing, reviewing, or refactoring\" trigger and governs React and Next patterns. They share a trigger, not a job. Where the guidelines say stop and ask, Long runs still holds: ask before the first edit, and mid-run stop only for a question the code cannot answer."
+    },
+    {
+      "domain": "orchestrating a task under usage limits",
+      "owner": "mine",
+      "rule": "mine/orchestrate is explicit-invoke only: it stages, budgets and routes a task when asked by name, and never fires on its own. Coding behaviour inside each chunk stays with karpathy/karpathy-guidelines."
     }
   ]
 }

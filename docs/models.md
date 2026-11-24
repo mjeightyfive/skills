@@ -2,62 +2,62 @@
 
 # Model scores
 
-CursorBench snapshot from https://cursor.com/cursorbench, fetched 2026-09-23T22:14:23.981Z, bench `cursorbench-4.0`.
-Families are pinned: Opus (not Fable), Grok, GPT Sol, Composer. Refresh with `node bin/cli.mjs models`.
-
-Grok has no Max. Extra High is its ceiling knob, not a claim it scores with Opus Max.
+CursorBench snapshot from https://cursor.com/cursorbench, fetched 2026-11-24T20:28:32.372Z, bench `cursorbench-4.1`.
+Families are pinned: Opus (with Haiku for mechanical work) and GPT. Refresh with `node bin/cli.mjs models`.
 
 ## Pairing used in the repo
 
 | Role | Used for | Models |
 |---|---|---|
-| Ceiling | `/improve deep` | Opus 5.5 High · Grok 4.7 Extra High · GPT-5.6 Sol Max |
-| High | other `/improve` advisor commands | Opus 5.5 High · Grok 4.7 High · GPT-5.6 Sol High |
-| Medium | `review-plan`, `reconcile`, Standard work | Opus 5.5 Medium · Composer 2.5 · Grok 4.7 Medium · GPT-5.6 Sol Medium |
-| Mechanical | executing a written plan | Opus 5.5 Low · Haiku 4.5 · Composer 2.5 · Grok 4.7 Fast |
+| Ceiling | `/improve deep` | Opus 5.5 High · GPT-5.6 Sol Max |
+| High | other `/improve` advisor commands | Opus 5.5 High · GPT-5.6 Sol High |
+| Medium | `review-plan`, `reconcile`, Standard work | Opus 5.5 Medium · GPT-5.6 Sol Medium |
+| Mechanical | executing a written plan | Opus 5.5 Low · Haiku 5.5 · GPT-5.6 Sol Low |
 
 Across tools:
 
-| Tier | Claude Code | Cursor | Grok Build |
+| Tier | Claude Code | Cursor | Codex |
 |---|---|---|---|
-| Deep | Opus 5.5 High | Opus 5.5 High · Grok 4.7 High · GPT-5.6 Sol High | Grok 4.7 High |
-| Standard | Opus 5.5 Medium | Opus 5.5 Medium · Composer 2.5 · Grok 4.7 Medium · GPT-5.6 Sol Medium | Grok 4.7 Medium |
-| Mechanical | Opus 5.5 Low · Haiku 4.5 | Composer 2.5 | Grok 4.7 Fast |
+| Deep | Opus 5.5 High | Opus 5.5 High · GPT-5.6 Sol High | gpt-6.2-astra High |
+| Standard | Opus 5.5 Medium | Opus 5.5 Medium · GPT-5.6 Sol Medium | gpt-6.2-sol Medium |
+| Mechanical | Opus 5.5 Low · Haiku 5.5 | Opus 5.5 Low · GPT-5.6 Sol Low | gpt-6.2-sol Low |
+
+## Codex
+
+CursorBench does not rank the Codex models. Their names come from the calibration rows in `~/.ai/usage-calibration.jsonl`,
+recorded under `codex` in [`data/models.json`](../data/models.json), and each is matched to a board family by name.
+
+| Tier | Codex | Family | On the board |
+|---|---|---|---|
+| Deep | gpt-6.2-astra High | astra | — |
+| Standard | gpt-6.2-sol Medium | sol | GPT-5.6 Sol |
+| Mechanical | gpt-6.2-sol Low | sol | GPT-5.6 Sol |
 
 ## Leaderboard slice
 
-Opus, Sonnet, Grok, GPT Sol, and Composer only. Fable, Gemini, Muse, Terra, and Luna stay in
-[`data/benchmarks.json`](../data/benchmarks.json) and are not recommended.
+Opus, Sonnet, Haiku and GPT only. Every other family stays in
+[`data/benchmarks.json`](../data/benchmarks.json) and is not recommended.
 
 | Rank | Model | Score | Cost / task |
 |---|---|---|---|
-| 1 | Opus 5.5 Max | 57.8% | $13.43 |
-| 2 | Opus 5.5 Extra High | 56% | $6.98 |
-| 3 | Opus 5.5 High | 56% | $3.97 |
-| 4 | Opus 5.5 Medium | 52.5% | $2.91 |
-| 9 | Opus 5 Max | 46.6% | $11.95 |
-| 10 | Grok 4.7 Extra High | 46.3% | $6.01 |
-| 11 | Opus 5 Extra High | 46.1% | $11.43 |
-| 13 | Opus 5 High | 44.7% | $9 |
-| 14 | Grok 4.7 High | 43.9% | $4.69 |
-| 15 | Opus 5.5 Low | 43.7% | $1.17 |
-| 16 | Opus 5 Medium | 43.3% | $6.94 |
-| 17 | GPT-5.6 Sol Max | 41.7% | $8.23 |
-| 18 | Grok 4.7 Medium | 41.6% | $3.49 |
-| 20 | Grok 4.6 Extra High | 41.4% | $6.1 |
-| 22 | Opus 5 Low | 40.7% | $4.87 |
-| 23 | Grok 4.6 High | 40.4% | $5.2 |
-| 25 | GPT-5.6 Sol Extra High | 37.7% | $4.4 |
-| 28 | Grok 4.6 Medium | 36.1% | $3.48 |
-| 30 | GPT-5.6 Sol High | 35.7% | $2.85 |
-| 31 | Sonnet 5 Max | 34.1% | $7.17 |
-| 33 | Grok 4.6 Low | 33.4% | $2.25 |
-| 35 | Grok 4.7 Low | 33.1% | $1.58 |
-| 38 | Sonnet 5 Extra High | 32% | $4.55 |
-| 39 | GPT-5.6 Sol Medium | 31.1% | $1.77 |
-| 40 | Sonnet 5 High | 30.8% | $3.48 |
-| 44 | Sonnet 5 Medium | 28% | $2.31 |
-| 45 | Composer 2.5 | 27.7% | $0.68 |
-| 48 | GPT-5.6 Sol Low | 24.6% | $0.87 |
-| 50 | Sonnet 5 Low | 24.1% | $1.39 |
+| 8 | Opus 5.5 Max | 58.1% | $11.88 |
+| 11 | Opus 5.5 Extra High | 56.7% | $6.54 |
+| 16 | Opus 5.5 High | 54.5% | $3.87 |
+| 17 | Sonnet 5.5 Max | 54.4% | $8.63 |
+| 20 | Opus 5.5 Medium | 50% | $2.85 |
+| 21 | Sonnet 5.5 Extra High | 49.9% | $3.13 |
+| 23 | Haiku 5.5 Max | 48.4% | $1.14 |
+| 28 | Haiku 5.5 Extra High | 45.2% | $0.56 |
+| 30 | Sonnet 5.5 High | 43.8% | $1.41 |
+| 31 | Opus 5.5 Low | 42.7% | $1.43 |
+| 35 | GPT-5.6 Sol Max | 40.9% | $7.6 |
+| 37 | Haiku 5.5 High | 37.5% | $0.31 |
+| 38 | GPT-5.6 Sol Extra High | 37.4% | $4.32 |
+| 40 | Sonnet 5.5 Medium | 34.3% | $0.63 |
+| 41 | Haiku 5.5 Medium | 34.2% | $0.17 |
+| 42 | GPT-5.6 Sol High | 33.2% | $3 |
+| 45 | Sonnet 5.5 Low | 31.8% | $0.44 |
+| 48 | GPT-5.6 Sol Medium | 28.7% | $1.97 |
+| 49 | Haiku 5.5 Low | 27.8% | $0.08 |
+| 52 | GPT-5.6 Sol Low | 23% | $0.98 |
 

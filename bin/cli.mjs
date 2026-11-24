@@ -175,7 +175,6 @@ export function seedTemplate(cwd = CWD) {
   const pairs = [
     ['template/AGENTS.md', 'AGENTS.md'],
     ['template/claude/settings.json', '.claude/settings.json'],
-    ['template/grok/config.toml', '.grok/config.toml'],
     ['template/cursor/rules/engineering-policy.mdc', '.cursor/rules/engineering-policy.mdc'],
   ];
   for (const [from, to] of pairs) {
@@ -321,7 +320,7 @@ function arg(flag, fallback) {
 const usage = `
 ${c.bold('skills-setup')} — one curated skill set across every project and every agent
 
-  ${c.cyan('init')}    [--profile web] [--agents claude-code,cursor,grok] [--local]
+  ${c.cyan('init')}    [--profile web] [--agents claude-code,cursor,codex] [--local]
           Install a profile here, seed the policy files, write routing and policy blocks.
   ${c.cyan('update')}  [--profile web]
           Pull newer upstream content and regenerate routing and policy blocks.

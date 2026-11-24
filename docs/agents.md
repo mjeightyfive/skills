@@ -9,14 +9,11 @@ Where each tool reads from, how the policy is enforced there, and which model to
 | Agent | Skills | Instructions | Enforcement |
 |---|---|---|---|
 | Claude Code | `.claude/skills/` → symlink | `CLAUDE.md` | `.claude/settings.json` `permissions.deny` |
-| Grok Build | `.grok/skills/` → symlink, and `.agents/skills/` directly | `AGENTS.md`, and it also reads `CLAUDE.md` and `.claude/` | `.grok/config.toml` `[permission]` rules; `grok inspect` shows what was picked up |
 | Cursor | `.agents/skills/` directly | `AGENTS.md`, `.cursor/rules/*.mdc` | allowlist Run Mode (global setting, not a repo file) |
 | Codex | `.agents/skills/` directly | `AGENTS.md` | sandbox mode |
 
-Grok reading `.claude/` and `CLAUDE.md` unprompted is the quiet win here: a repo set up for
-Claude Code is already set up for Grok. Claude Code loads this policy only when `CLAUDE.md` is a
-symlink to `AGENTS.md` or contains `@AGENTS.md`. Cursor and Codex read `AGENTS.md`, which the
-template provides.
+Claude Code loads this policy only when `CLAUDE.md` is a symlink to `AGENTS.md` or contains
+`@AGENTS.md`. Cursor and Codex read `AGENTS.md`, which the template provides.
 
 ## Enforcement is not portable
 
@@ -31,11 +28,8 @@ differently:
   instead: permit `git status`, `git diff`, `git log`, `git show`, `git blame` and the project's
   test and build commands, and let everything else prompt. It is a global setting, so it is set
   once per machine, not per repo.
-- **Grok Build** — `[permission]` rules in `.grok/config.toml` per project, and the template
-  ships them, mirroring the Claude deny and allow lists. `deny` wins over `allow` and still
-  applies under always-approve. Grok also reads hook files from `.claude/settings.json`, but
-  project hooks run only once trusted (`/hooks-trust` or `--trust`), and its docs do not say it
-  reads `permissions.deny` there — hence the separate file.
+- **Codex** — the sandbox mode is the guard. It limits what a command may write and reach
+  rather than matching command names, so the git rule itself still rests on the prose.
 
 Treat all three as guardrails, not sandboxes. The reason the rule is also written into
 `AGENTS.md` is that the guardrail catches the obvious spelling and the prose catches the intent.
@@ -74,22 +68,23 @@ Work splits into three tiers. The table maps them across the three tools; names 
 [docs/models.md](models.md) when you run `skills-setup models`.
 
 <!-- skills:models:effort-table:begin -->
-| Tier | Work | Claude Code | Cursor | Grok Build |
+| Tier | Work | Claude Code | Cursor | Codex |
 |---|---|---|---|---|
-| Deep | Architecture, multi-file refactor, repo audits, debugging something that resists a first guess | Opus 5.5 High | Opus 5.5 High · Grok 4.7 High · GPT-5.6 Sol High | Grok 4.7 High |
-| Standard | Feature work against a clear spec, a contained bug fix, a review | Opus 5.5 Medium | Opus 5.5 Medium · Composer 2.5 · Grok 4.7 Medium · GPT-5.6 Sol Medium | Grok 4.7 Medium |
-| Mechanical | Renames, file moves, config edits, boilerplate, anything where the answer is already decided | Opus 5.5 Low · Haiku 4.5 | Composer 2.5 | Grok 4.7 Fast |
+| Deep | Architecture, multi-file refactor, repo audits, debugging something that resists a first guess | Opus 5.5 High | Opus 5.5 High · GPT-5.6 Sol High | gpt-6.2-astra High |
+| Standard | Feature work against a clear spec, a contained bug fix, a review | Opus 5.5 Medium | Opus 5.5 Medium · GPT-5.6 Sol Medium | gpt-6.2-sol Medium |
+| Mechanical | Renames, file moves, config edits, boilerplate, anything where the answer is already decided | Opus 5.5 Low · Haiku 5.5 | Opus 5.5 Low · GPT-5.6 Sol Low | gpt-6.2-sol Low |
 <!-- skills:models:effort-table:end -->
 
 Notes that bite in practice:
 
-- Cursor's effort switching and fast mode need Pro or higher. On the entry plan Grok 4.5,
-  4.6, and 4.7 are pinned to medium effort, so the Deep row collapses into the Standard row.
-- Composer 2.5 calibrates its own effort from the task, so there is no dial to set — which
-  makes it a poor fit for the Deep tier, where you want to force more work than the task
-  appears to need.
+- Cursor's effort switching and fast mode need Pro or higher. The Cursor column assumes Pro+,
+  where every effort in it can be set.
+- The Codex column does not come from CursorBench, which does not rank those models. It comes
+  from the calibration rows in `~/.ai/usage-calibration.jsonl`, recorded under `codex` in
+  [`data/models.json`](../data/models.json): the lead model at high for Deep, the reviewer
+  model at medium and low for Standard and Mechanical. Edit it there when the models change.
 - The `improve` skill is explicit-invoke and read-only. Advisor commands use the High knobs
-  (`/improve deep` uses Opus High, with Grok Extra High and Sol Max). That split — expensive model writes `plans/`, cheaper one
+  (`/improve deep` uses Opus High, with Sol Max in Cursor). That split — expensive model writes `plans/`, cheaper one
   executes them — is the whole point. Plan mode is an optional harness in the
   [README runbook](../README.md#using-improve), not a substitute for the plan file.
 - Opus Low on the mechanical row beats Sonnet on CursorBench. Per-task API cost may not match what a subscription actually allows.
@@ -103,5 +98,6 @@ opening the other tool in the same directory. The two things that do not carry o
 
 - **Session context.** Hand off through a file, not a paste. `improve` writes plan files for
   exactly this reason.
-- **Enforcement.** Moving from Claude Code to Cursor drops the `permissions.deny` boundary and
-  leaves only the prose. Set the Cursor allowlist once and it stops mattering.
+- **Enforcement.** Moving from Claude Code to Cursor or Codex drops the `permissions.deny`
+  boundary and leaves the prose plus that tool's own guard: the allowlist Run Mode in Cursor,
+  the sandbox mode in Codex. Set the Cursor allowlist once and it stops mattering there.

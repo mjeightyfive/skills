@@ -6,6 +6,8 @@ import { fileURLToPath } from 'node:url';
 import {
   applyRegion,
   classifyFamily,
+  codexBoardName,
+  codexCells,
   loadPolicy,
   pair,
   parseLeaderboard,
@@ -25,12 +27,12 @@ function frozenBoard() {
 const policy = loadPolicy(ROOT);
 
 test('parses Extra High before High', () => {
-  assert.deepEqual(parseModelName('Grok 4.6 Extra High'), { base: 'Grok 4.6', effort: 'extra-high' });
+  assert.deepEqual(parseModelName('GPT-5.6 Sol Extra High'), { base: 'GPT-5.6 Sol', effort: 'extra-high' });
   assert.deepEqual(parseModelName('Opus 5 High'), { base: 'Opus 5', effort: 'high' });
-  assert.deepEqual(parseModelName('Composer 2.5'), { base: 'Composer 2.5', effort: null });
+  assert.deepEqual(parseModelName('Haiku 4.5'), { base: 'Haiku 4.5', effort: null });
   assert.equal(classifyFamily('GPT-5.6 Sol', policy), 'sol');
   assert.equal(classifyFamily('GPT-5.6 Terra', policy), 'terra');
-  assert.equal(classifyFamily('Fable 5.1', policy), 'fable');
+  assert.equal(classifyFamily('Fable 5.1', policy), null);
 });
 
 test('parses a markdown CursorBench table and drops duplicate rows', () => {
@@ -39,13 +41,13 @@ test('parses a markdown CursorBench table and drops duplicate rows', () => {
   assert.equal(bench, 'cursorbench-4.0');
   assert.equal(rows.filter((r) => r.name === 'Opus 5 Max').length, 1);
   assert.equal(pickRow(rows, 'opus', 'max').score, 46.6);
-  assert.equal(pickRow(rows, 'grok', 'extra-high').name, 'Grok 4.6 Extra High');
+  assert.equal(pickRow(rows, 'sol', 'high').name, 'GPT-5.6 Sol High');
 });
 
 test('parses nested CursorBench cells split by React comments', () => {
-  const text = `<table><tr><td>6</td><td><span class="truncate">Grok 4.7 Extra High</span><span></span></td><td>46.3<!-- -->%</td><td>$<!-- -->6.01</td><td>70,141</td><td>88</td></tr></table>`;
+  const text = `<table><tr><td>6</td><td><span class="truncate">GPT-5.6 Sol Extra High</span><span></span></td><td>46.3<!-- -->%</td><td>$<!-- -->6.01</td><td>70,141</td><td>88</td></tr></table>`;
   const { rows } = parseLeaderboard(text, policy);
-  const row = rows.find((r) => r.name === 'Grok 4.7 Extra High');
+  const row = rows.find((r) => r.name === 'GPT-5.6 Sol Extra High');
   assert.equal(row.rank, 6);
   assert.equal(row.effort, 'extra-high');
   assert.equal(row.score, 46.3);
@@ -65,24 +67,41 @@ test('pairs pinned families and ignores Fable', () => {
   const snapshot = frozenBoard();
   const picks = pair(snapshot, policy);
   assert.equal(picks.ceiling.opus, 'Opus 5 High');
-  assert.equal(picks.ceiling.grok, 'Grok 4.7 Extra High');
   assert.equal(picks.ceiling.sol, 'GPT-5.6 Sol Max');
   assert.equal(picks.high.opus, 'Opus 5 High');
   assert.equal(picks.mechanical.opus, 'Opus 5 Low');
   assert.equal(picks.mechanical.haiku, 'Haiku 4.5');
-  assert.equal(picks.mechanical.grok, 'Grok 4.7 Fast');
+  assert.equal(picks.mechanical.sol, 'GPT-5.6 Sol Low');
   assert.doesNotMatch(picks.ceiling.join, /Fable/);
   assert.doesNotMatch(picks.high.join, /Fable/);
 });
 
-test('tool columns put GPT Sol on Cursor Deep, not Claude Code', () => {
+test('tool columns put GPT Sol on Cursor, not Claude Code', () => {
   const picks = pair(frozenBoard(), policy);
-  const cols = toolColumns(picks);
+  const cols = toolColumns(picks, policy);
   assert.equal(cols.deep.claude, 'Opus 5 High');
-  assert.match(cols.standard.cursor, /^Opus 5 Medium · Composer 2\.5/);
-  assert.match(cols.deep.cursor, /GPT-5\.6 Sol High/);
-  assert.doesNotMatch(cols.deep.claude, /Grok|GPT/);
-  assert.equal(cols.deep.grok, 'Grok 4.7 High');
+  assert.equal(cols.deep.cursor, 'Opus 5 High · GPT-5.6 Sol High');
+  assert.equal(cols.standard.cursor, 'Opus 5 Medium · GPT-5.6 Sol Medium');
+  assert.equal(cols.mechanical.claude, 'Opus 5 Low · Haiku 4.5');
+  assert.equal(cols.mechanical.cursor, 'Opus 5 Low · GPT-5.6 Sol Low');
+  assert.doesNotMatch(cols.deep.claude, /GPT/);
+});
+
+test('codex cells come from the policy at the tier efforts', () => {
+  const cols = toolColumns(pair(frozenBoard(), policy), policy);
+  assert.equal(cols.deep.codex, 'gpt-6.2-astra High');
+  assert.equal(cols.standard.codex, 'gpt-6.2-sol Medium');
+  assert.equal(cols.mechanical.codex, 'gpt-6.2-sol Low');
+});
+
+test('codex names match board families by name, and an unknown one fails', () => {
+  assert.equal(codexBoardName('gpt-6.2-sol'), 'GPT-6.2 Sol');
+  assert.equal(classifyFamily(codexBoardName('gpt-5.6-sol'), policy), 'sol');
+  assert.equal(codexCells(policy).deep.family, 'astra');
+  const typo = { ...policy, codex: { ...policy.codex, deep: { model: 'gpt-6.2-astro', effort: 'high' } } };
+  assert.throws(() => codexCells(typo), /matches no family/);
+  const badEffort = { ...policy, codex: { ...policy.codex, standard: { model: 'gpt-6.2-sol', effort: 'ultra' } } };
+  assert.throws(() => codexCells(badEffort), /not a known effort/);
 });
 
 test('improve table uses ceiling only on /improve deep', () => {
@@ -91,7 +110,7 @@ test('improve table uses ceiling only on /improve deep', () => {
   const deep = table.split('\n').find((l) => l.includes('`/improve deep`'));
   const bare = table.split('\n').find((l) => l.startsWith('| `/improve` |'));
   assert.match(deep, /Opus 5 High/);
-  assert.match(deep, /Grok 4\.7 Extra High/);
+  assert.match(deep, /GPT-5\.6 Sol Max/);
   assert.doesNotMatch(bare, /Extra High/);
   assert.match(bare, /Opus 5 High/);
 });
@@ -99,8 +118,8 @@ test('improve table uses ceiling only on /improve deep', () => {
 test('applyRegion keeps inline replacements on one line', () => {
   const src =
     'Run <!-- skills:models:role-high:begin -->old<!-- skills:models:role-high:end --> now.';
-  const next = applyRegion(src, 'role-high', 'Opus 5 High · Grok 4.6 High');
-  assert.equal(next, 'Run <!-- skills:models:role-high:begin -->Opus 5 High · Grok 4.6 High<!-- skills:models:role-high:end --> now.');
+  const next = applyRegion(src, 'role-high', 'Opus 5 High · GPT-5.6 Sol High');
+  assert.equal(next, 'Run <!-- skills:models:role-high:begin -->Opus 5 High · GPT-5.6 Sol High<!-- skills:models:role-high:end --> now.');
 });
 
 test('applyRegion rewrites a block table', () => {
@@ -121,7 +140,6 @@ test('snapshotFromPage rejects a thin parse', () => {
 });
 
 test('proposing line names all three tools', () => {
-  const line = renderProposingLine(pair(frozenBoard(), policy));
-  assert.match(line, /^Deep — Opus 5 High · Cursor:/);
-  assert.match(line, /Grok Build: Grok 4\.7 High$/);
+  const line = renderProposingLine(pair(frozenBoard(), policy), policy);
+  assert.equal(line, 'Deep — Opus 5 High · Cursor: Opus 5 High · GPT-5.6 Sol High · Codex: gpt-6.2-astra High');
 });

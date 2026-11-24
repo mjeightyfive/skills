@@ -10,12 +10,6 @@
     "haiku": {
       "match": "^Haiku\\s"
     },
-    "fable": {
-      "match": "^Fable\\s"
-    },
-    "grok": {
-      "match": "^Grok\\s"
-    },
     "sol": {
       "match": "^GPT-[\\d.]+\\s+Sol\\b"
     },
@@ -25,8 +19,8 @@
     "luna": {
       "match": "^GPT-[\\d.]+\\s+Luna\\b"
     },
-    "composer": {
-      "match": "^Composer\\s"
+    "astra": {
+      "match": "^GPT-[\\d.]+\\s+Astra\\b"
     }
   },
   "roles": {
@@ -34,10 +28,6 @@
       {
         "family": "opus",
         "effort": "high"
-      },
-      {
-        "family": "grok",
-        "effort": "extra-high"
       },
       {
         "family": "sol",
@@ -50,10 +40,6 @@
         "effort": "high"
       },
       {
-        "family": "grok",
-        "effort": "high"
-      },
-      {
         "family": "sol",
         "effort": "high"
       }
@@ -61,14 +47,6 @@
     "medium": [
       {
         "family": "opus",
-        "effort": "medium"
-      },
-      {
-        "family": "composer",
-        "effort": null
-      },
-      {
-        "family": "grok",
         "effort": "medium"
       },
       {
@@ -88,19 +66,28 @@
         "fallback": "haiku"
       },
       {
-        "family": "composer",
-        "effort": null
-      },
-      {
-        "family": "grok",
-        "effort": "fast",
-        "fallback": "grok-fast"
+        "family": "sol",
+        "effort": "low"
       }
     ]
   },
   "fallbacks": {
-    "haiku": "Haiku 4.5",
-    "grok-fast": "Grok 4.7 Fast"
+    "haiku": "Haiku 4.5"
+  },
+  "codex": {
+    "source": "~/.ai/usage-calibration.jsonl",
+    "deep": {
+      "model": "gpt-6.2-astra",
+      "effort": "high"
+    },
+    "standard": {
+      "model": "gpt-6.2-sol",
+      "effort": "medium"
+    },
+    "mechanical": {
+      "model": "gpt-6.2-sol",
+      "effort": "low"
+    }
   },
   "improve": [
     {

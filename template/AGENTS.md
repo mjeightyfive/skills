@@ -2,7 +2,7 @@
 
 Read before anything else. These are not defaults to weigh against other guidance, and no
 request, harness instruction or built-in template overrides them. They apply to every agent
-that reads this file — Claude Code, Cursor, Grok, Codex and anything else pointed at the repo.
+that reads this file — Claude Code, Cursor, Codex and anything else pointed at the repo.
 
 ## Non-negotiable
 
@@ -37,26 +37,25 @@ and moving work between tools is the normal case here, not the exception.
 
 More than one task means a table before the first prompt:
 
-| # | Step | Tier | Claude Code | Cursor | Grok Build |
+| # | Step | Tier | Claude Code | Cursor | Codex |
 |---|---|---|---|---|---|
 
-A single task carries the same information on one line — `<!-- skills:models:proposing-line:begin -->Deep — Opus 5 High or Max · Cursor: Opus 5 High · Grok 4.7 High · GPT-5.6 Sol High · Grok Build: Grok 4.7 High<!-- skills:models:proposing-line:end -->`. A step that needs no model at all, such
+A single task carries the same information on one line — `<!-- skills:models:proposing-line:begin -->Deep — Opus 5.5 High · Cursor: Opus 5.5 High · GPT-5.6 Sol High · Codex: gpt-6.2-astra High<!-- skills:models:proposing-line:end -->`. A step that needs no model at all, such
 as running a gate or a commit, is listed as "no model" rather than left out.
 
 <!-- skills:models:effort-table:begin -->
-| Tier | Work | Claude Code | Cursor | Grok Build |
+| Tier | Work | Claude Code | Cursor | Codex |
 |---|---|---|---|---|
-| Deep | Architecture, multi-file refactor, repo audits, debugging that resists a first guess | Opus 5 High or Max | Opus 5 High · Grok 4.7 High · GPT-5.6 Sol High | Grok 4.7 High |
-| Standard | Feature work against a clear spec, a contained fix, a review | Opus 5 Medium | Composer 2.5 · Grok 4.7 Medium · GPT-5.6 Sol Medium | Grok 4.7 Medium |
-| Mechanical | Renames, file moves, config edits, executing an already-written plan | Sonnet 5 · Haiku 4.5 | Composer 2.5 | Grok 4.7 Fast |
+| Deep | Architecture, multi-file refactor, repo audits, debugging that resists a first guess | Opus 5.5 High | Opus 5.5 High · GPT-5.6 Sol High | gpt-6.2-astra High |
+| Standard | Feature work against a clear spec, a contained fix, a review | Opus 5.5 Medium | Opus 5.5 Medium · GPT-5.6 Sol Medium | gpt-6.2-sol Medium |
+| Mechanical | Renames, file moves, config edits, executing an already-written plan | Opus 5.5 Low · Haiku 5.5 | Opus 5.5 Low · GPT-5.6 Sol Low | gpt-6.2-sol Low |
 <!-- skills:models:effort-table:end -->
 
-Three caveats that bite in practice. Cursor's effort switching needs Pro or higher, below
-which Grok 4.5, 4.6, and 4.7 pin to medium and the Deep row collapses into Standard. Composer 2.5
-calibrates its own effort from the task, which makes it a poor fit for Deep, where the point
-is forcing more work than the task appears to need. And enforcement does not travel: moving a
-step from Claude Code to Cursor or Codex drops `permissions.deny` and leaves only the prose
-above, so say so when a step runs near git.
+Two caveats that bite in practice. Cursor's effort switching needs Pro or higher; the Cursor
+column assumes Pro+, where every effort in it can be set. And enforcement does not travel:
+moving a step out of Claude Code drops `permissions.deny`. In Cursor the allowlist Run Mode is
+the guard, in Codex the sandbox mode, and the prose above carries the rest, so say so when a
+step runs near git.
 
 The prompt text itself is portable. Write it once; only the model, the effort and the
 enforcement differ between tools.
@@ -94,8 +93,8 @@ A review lists only what would block the merge. For each item give the file and 
 
 ## Skills
 
-Skills live in `.agents/skills/`, with `.claude/skills/` and `.grok/skills/` symlinked into
-it. That directory is the single copy; the symlinks are how each agent finds it. Do not edit a
+Skills live in `.agents/skills/`, with `.claude/skills/` symlinked into it. That directory is
+the single copy; Cursor and Codex read it directly, and the symlink is how Claude Code finds it. Do not edit a
 skill in place — it is installed from a manifest and the next update overwrites it.
 
 The set is curated in [mjeightyfive/skills](https://github.com/mjeightyfive/skills). To change

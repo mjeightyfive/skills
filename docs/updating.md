@@ -31,7 +31,7 @@ reason, commit, and push before going further.
 Update every consumer repository:
 
 ```bash
-for pair in /Users/marcin/Sites/mje.fi:web /Users/marcin/Dev/exy:cli; do cd "${pair%:*}" && node ~/Dev/skills/bin/cli.mjs update --profile "${pair#*:}"; done
+for pair in /Users/marcin/Sites/mje.fi:web; do cd "${pair%:*}" && node ~/Dev/skills/bin/cli.mjs update --profile "${pair#*:}"; done
 ```
 
 Update the user-level skills, which the wrapper does not cover:
@@ -43,11 +43,7 @@ npx -y skills@latest update -g -y
 Commit each consumer:
 
 ```bash
-cd /Users/marcin/Sites/mje.fi && pnpm verify && git add skills-lock.json .agents/skills .claude/skills .grok/skills AGENTS.md && git commit -m "Update agent skills"
-```
-
-```bash
-cd ~/Dev/exy && git add skills-lock.json .agents/skills .claude/skills .grok/skills AGENTS.md && git commit -m "Update agent skills"
+cd /Users/marcin/Sites/mje.fi && pnpm verify && git add skills-lock.json .agents/skills .claude/skills AGENTS.md && git commit -m "Update agent skills"
 ```
 
 ## Things that bite
