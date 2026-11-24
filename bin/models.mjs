@@ -196,22 +196,46 @@ export function codexCells(policy) {
   return cells;
 }
 
+/**
+ * Cursor families the owner pins without a board pick. The board need not
+ * contain them; only a malformed pin fails. `lead` puts the pin first in its
+ * tier's cell, otherwise it follows the measured names.
+ */
+export function pinnedCursorCells(policy) {
+  const cells = Object.fromEntries(TIERS.map((tier) => [tier, { lead: [], tail: [] }]));
+  for (const [family, spec] of Object.entries(policy.cursorPinned ?? {})) {
+    if (typeof spec?.model !== 'string' || !spec.model.trim()) {
+      throw new Error(`pinned cursor family "${family}" has no model`);
+    }
+    for (const tier of TIERS) {
+      const effort = spec[tier]?.effort;
+      if (!effort) throw new Error(`pinned cursor family "${family}" has no ${tier} effort`);
+      const label = EFFORT_LABELS[effort];
+      if (!label) throw new Error(`pinned cursor ${family} ${tier} effort "${effort}" is not a known effort`);
+      cells[tier][spec[tier].lead ? 'lead' : 'tail'].push(`${spec.model} ${label}`);
+    }
+  }
+  return cells;
+}
+
 export function toolColumns(picks, policy) {
   const codex = codexCells(policy);
+  const pinned = pinnedCursorCells(policy);
+  const cursor = (tier, names) => joinNames([...pinned[tier].lead, ...names, ...pinned[tier].tail]);
   return {
     deep: {
       claude: picks.high.opus,
-      cursor: joinNames([picks.high.opus, picks.high.sol]),
+      cursor: cursor('deep', [picks.high.opus, picks.high.sol]),
       codex: codex.deep.name,
     },
     standard: {
       claude: picks.medium.opus,
-      cursor: joinNames([picks.medium.opus, picks.medium.sol]),
+      cursor: cursor('standard', [picks.medium.opus, picks.medium.sol]),
       codex: codex.standard.name,
     },
     mechanical: {
       claude: joinNames([picks.mechanical.opus, picks.mechanical.haiku]),
-      cursor: joinNames([picks.mechanical.opus, picks.mechanical.sol]),
+      cursor: cursor('mechanical', [picks.mechanical.opus, picks.mechanical.sol]),
       codex: codex.mechanical.name,
     },
   };
@@ -253,7 +277,7 @@ export function renderModelsDoc(snapshot, picks, policy) {
     '# Model scores',
     '',
     `CursorBench snapshot from ${snapshot.source}, fetched ${snapshot.fetchedAt}, bench \`${snapshot.bench}\`.`,
-    'Families are pinned: Opus (with Haiku for mechanical work) and GPT. Refresh with `node bin/cli.mjs models`.',
+    'Families are pinned: Opus (with Haiku for mechanical work) and GPT, plus Grok in Cursor. Refresh with `node bin/cli.mjs models`.',
     '',
     '## Pairing used in the repo',
     '',
@@ -287,6 +311,24 @@ export function renderModelsDoc(snapshot, picks, policy) {
     ];
     const label = `${tier[0].toUpperCase()}${tier.slice(1)}`;
     lines.push(`| ${label} | ${cell.name} | ${cell.family} | ${bases.length ? bases.join(', ') : '—'} |`);
+  }
+  const pinned = Object.values(policy.cursorPinned ?? {});
+  if (pinned.length) {
+    lines.push(
+      '',
+      '## Pinned in Cursor',
+      '',
+      `${pinned.map((spec) => spec.model).join(', ')} is pinned, not measured: the Cursor cells name it at the efforts set`,
+      'under `cursorPinned` in [`data/models.json`](../data/models.json), whatever the board ranks.',
+      '',
+      '| Tier | Cursor pin |',
+      '|---|---|',
+    );
+    const cells = pinnedCursorCells(policy);
+    for (const tier of TIERS) {
+      const label = `${tier[0].toUpperCase()}${tier.slice(1)}`;
+      lines.push(`| ${label} | ${joinNames([...cells[tier].lead, ...cells[tier].tail])} |`);
+    }
   }
   lines.push(
     '',

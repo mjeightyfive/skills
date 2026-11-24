@@ -46,7 +46,7 @@ Two generated regions, both marker-delimited, both rewritten on `init` and `upda
    moved, it reports a conflict and refuses to overwrite.
 
 They are several named sections, not one policy block. A consumer's `AGENTS.md` is mostly
-theirs — mje.fi rewrote Non-negotiable, exy replaced it with No AI traces. One wrap around
+theirs — mje.fi rewrote Non-negotiable. One wrap around
 the whole template would either stamp over that or sit in permanent conflict, and a new
 section like Proposing work could not land without taking the rest. Each portable section is
 its own region, opted in by markers in the template. Unmarked headings in the template are
@@ -70,15 +70,18 @@ Work splits into three tiers. The table maps them across the three tools; names 
 <!-- skills:models:effort-table:begin -->
 | Tier | Work | Claude Code | Cursor | Codex |
 |---|---|---|---|---|
-| Deep | Architecture, multi-file refactor, repo audits, debugging something that resists a first guess | Opus 5.5 High | Opus 5.5 High · GPT-5.6 Sol High | gpt-6.2-astra High |
-| Standard | Feature work against a clear spec, a contained bug fix, a review | Opus 5.5 Medium | Opus 5.5 Medium · GPT-5.6 Sol Medium | gpt-6.2-sol Medium |
-| Mechanical | Renames, file moves, config edits, boilerplate, anything where the answer is already decided | Opus 5.5 Low · Haiku 5.5 | Opus 5.5 Low · GPT-5.6 Sol Low | gpt-6.2-sol Low |
+| Deep | Architecture, multi-file refactor, repo audits, debugging something that resists a first guess | Opus 5.5 High | Opus 5.5 High · GPT-5.6 Sol High · Grok 4.7 High | gpt-6.2-astra High |
+| Standard | Feature work against a clear spec, a contained bug fix, a review | Opus 5.5 Medium | Opus 5.5 Medium · GPT-5.6 Sol Medium · Grok 4.7 Medium | gpt-6.2-sol Medium |
+| Mechanical | Renames, file moves, config edits, boilerplate, anything where the answer is already decided | Opus 5.5 Low · Haiku 5.5 | Grok 4.7 Fast · Opus 5.5 Low · GPT-5.6 Sol Low | gpt-6.2-sol Low |
 <!-- skills:models:effort-table:end -->
 
 Notes that bite in practice:
 
 - Cursor's effort switching and fast mode need Pro or higher. The Cursor column assumes Pro+,
   where every effort in it can be set.
+- Grok 4.7 in the Cursor column is pinned, not measured: its efforts are set under
+  `cursorPinned` in [`data/models.json`](../data/models.json), and it leads the Mechanical cell.
+  Grok Build, the separate tool, is not used.
 - The Codex column does not come from CursorBench, which does not rank those models. It comes
   from the calibration rows in `~/.ai/usage-calibration.jsonl`, recorded under `codex` in
   [`data/models.json`](../data/models.json): the lead model at high for Deep, the reviewer
@@ -87,7 +90,6 @@ Notes that bite in practice:
   (`/improve deep` uses Opus High, with Sol Max in Cursor). That split — expensive model writes `plans/`, cheaper one
   executes them — is the whole point. Plan mode is an optional harness in the
   [README runbook](../README.md#using-improve), not a substitute for the plan file.
-- Opus Low on the mechanical row beats Sonnet on CursorBench. Per-task API cost may not match what a subscription actually allows.
 - Fast mode is worth it for Plan-mode back-and-forth. Leave it off for `/improve deep` and for runs nobody watches.
 - Before `/improve security` or `/improve deep`, set "Switch models when a message is flagged" to ask first. Anything written after a switch came from the older model.
 

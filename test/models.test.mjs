@@ -13,6 +13,7 @@ import {
   parseLeaderboard,
   parseModelName,
   pickRow,
+  pinnedCursorCells,
   renderImproveTable,
   renderProposingLine,
   snapshotFromPage,
@@ -76,15 +77,37 @@ test('pairs pinned families and ignores Fable', () => {
   assert.doesNotMatch(picks.high.join, /Fable/);
 });
 
-test('tool columns put GPT Sol on Cursor, not Claude Code', () => {
+test('tool columns put GPT Sol and Grok on Cursor, not Claude Code', () => {
   const picks = pair(frozenBoard(), policy);
   const cols = toolColumns(picks, policy);
   assert.equal(cols.deep.claude, 'Opus 5 High');
-  assert.equal(cols.deep.cursor, 'Opus 5 High · GPT-5.6 Sol High');
-  assert.equal(cols.standard.cursor, 'Opus 5 Medium · GPT-5.6 Sol Medium');
+  assert.equal(cols.deep.cursor, 'Opus 5 High · GPT-5.6 Sol High · Grok 4.7 High');
+  assert.equal(cols.standard.cursor, 'Opus 5 Medium · GPT-5.6 Sol Medium · Grok 4.7 Medium');
   assert.equal(cols.mechanical.claude, 'Opus 5 Low · Haiku 4.5');
-  assert.equal(cols.mechanical.cursor, 'Opus 5 Low · GPT-5.6 Sol Low');
-  assert.doesNotMatch(cols.deep.claude, /GPT/);
+  assert.equal(cols.mechanical.cursor, 'Grok 4.7 Fast · Opus 5 Low · GPT-5.6 Sol Low');
+  assert.doesNotMatch(cols.deep.claude, /GPT|Grok/);
+});
+
+test('a pinned Cursor family needs no board rows', () => {
+  const snapshot = frozenBoard();
+  assert.ok(!snapshot.rows.some((r) => /^Grok\s/.test(r.name)));
+  const cols = toolColumns(pair(snapshot, policy), policy);
+  assert.match(cols.deep.cursor, /Grok 4\.7 High$/);
+  assert.match(cols.mechanical.cursor, /^Grok 4\.7 Fast · /);
+});
+
+test('a malformed Cursor pin fails loudly', () => {
+  const grok = policy.cursorPinned.grok;
+  assert.throws(() => pinnedCursorCells({ cursorPinned: { grok: { ...grok, model: '' } } }), /has no model/);
+  assert.throws(
+    () => pinnedCursorCells({ cursorPinned: { grok: { ...grok, standard: undefined } } }),
+    /has no standard effort/,
+  );
+  assert.throws(
+    () => pinnedCursorCells({ cursorPinned: { grok: { ...grok, deep: { effort: 'ultra' } } } }),
+    /not a known effort/,
+  );
+  assert.deepEqual(pinnedCursorCells({}).deep, { lead: [], tail: [] });
 });
 
 test('codex cells come from the policy at the tier efforts', () => {
@@ -141,5 +164,5 @@ test('snapshotFromPage rejects a thin parse', () => {
 
 test('proposing line names all three tools', () => {
   const line = renderProposingLine(pair(frozenBoard(), policy), policy);
-  assert.equal(line, 'Deep — Opus 5 High · Cursor: Opus 5 High · GPT-5.6 Sol High · Codex: gpt-6.2-astra High');
+  assert.equal(line, 'Deep — Opus 5 High · Cursor: Opus 5 High · GPT-5.6 Sol High · Grok 4.7 High · Codex: gpt-6.2-astra High');
 });

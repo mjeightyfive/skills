@@ -1,6 +1,6 @@
 {
   "source": "https://cursor.com/cursorbench",
-  "fetchedAt": "2026-11-24T20:28:32.372Z",
+  "fetchedAt": "2026-11-24T20:37:42.941Z",
   "bench": "cursorbench-4.1",
   "rows": [
     { "rank": 1, "name": "Gemini 4 Neon Extra High", "family": null, "effort": "extra-high", "score": 65.4, "cost": 10.67, "tokens": 136273, "steps": 73 },

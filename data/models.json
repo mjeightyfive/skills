@@ -89,6 +89,21 @@
       "effort": "low"
     }
   },
+  "cursorPinned": {
+    "grok": {
+      "model": "Grok 4.7",
+      "deep": {
+        "effort": "high"
+      },
+      "standard": {
+        "effort": "medium"
+      },
+      "mechanical": {
+        "effort": "fast",
+        "lead": true
+      }
+    }
+  },
   "improve": [
     {
       "command": "`/improve`",

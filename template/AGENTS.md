@@ -40,15 +40,15 @@ More than one task means a table before the first prompt:
 | # | Step | Tier | Claude Code | Cursor | Codex |
 |---|---|---|---|---|---|
 
-A single task carries the same information on one line — `<!-- skills:models:proposing-line:begin -->Deep — Opus 5.5 High · Cursor: Opus 5.5 High · GPT-5.6 Sol High · Codex: gpt-6.2-astra High<!-- skills:models:proposing-line:end -->`. A step that needs no model at all, such
+A single task carries the same information on one line — `<!-- skills:models:proposing-line:begin -->Deep — Opus 5.5 High · Cursor: Opus 5.5 High · GPT-5.6 Sol High · Grok 4.7 High · Codex: gpt-6.2-astra High<!-- skills:models:proposing-line:end -->`. A step that needs no model at all, such
 as running a gate or a commit, is listed as "no model" rather than left out.
 
 <!-- skills:models:effort-table:begin -->
 | Tier | Work | Claude Code | Cursor | Codex |
 |---|---|---|---|---|
-| Deep | Architecture, multi-file refactor, repo audits, debugging that resists a first guess | Opus 5.5 High | Opus 5.5 High · GPT-5.6 Sol High | gpt-6.2-astra High |
-| Standard | Feature work against a clear spec, a contained fix, a review | Opus 5.5 Medium | Opus 5.5 Medium · GPT-5.6 Sol Medium | gpt-6.2-sol Medium |
-| Mechanical | Renames, file moves, config edits, executing an already-written plan | Opus 5.5 Low · Haiku 5.5 | Opus 5.5 Low · GPT-5.6 Sol Low | gpt-6.2-sol Low |
+| Deep | Architecture, multi-file refactor, repo audits, debugging that resists a first guess | Opus 5.5 High | Opus 5.5 High · GPT-5.6 Sol High · Grok 4.7 High | gpt-6.2-astra High |
+| Standard | Feature work against a clear spec, a contained fix, a review | Opus 5.5 Medium | Opus 5.5 Medium · GPT-5.6 Sol Medium · Grok 4.7 Medium | gpt-6.2-sol Medium |
+| Mechanical | Renames, file moves, config edits, executing an already-written plan | Opus 5.5 Low · Haiku 5.5 | Grok 4.7 Fast · Opus 5.5 Low · GPT-5.6 Sol Low | gpt-6.2-sol Low |
 <!-- skills:models:effort-table:end -->
 
 Two caveats that bite in practice. Cursor's effort switching needs Pro or higher; the Cursor

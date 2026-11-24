@@ -2,8 +2,8 @@
 
 # Model scores
 
-CursorBench snapshot from https://cursor.com/cursorbench, fetched 2026-11-24T20:28:32.372Z, bench `cursorbench-4.1`.
-Families are pinned: Opus (with Haiku for mechanical work) and GPT. Refresh with `node bin/cli.mjs models`.
+CursorBench snapshot from https://cursor.com/cursorbench, fetched 2026-11-24T20:37:42.941Z, bench `cursorbench-4.1`.
+Families are pinned: Opus (with Haiku for mechanical work) and GPT, plus Grok in Cursor. Refresh with `node bin/cli.mjs models`.
 
 ## Pairing used in the repo
 
@@ -18,9 +18,9 @@ Across tools:
 
 | Tier | Claude Code | Cursor | Codex |
 |---|---|---|---|
-| Deep | Opus 5.5 High | Opus 5.5 High · GPT-5.6 Sol High | gpt-6.2-astra High |
-| Standard | Opus 5.5 Medium | Opus 5.5 Medium · GPT-5.6 Sol Medium | gpt-6.2-sol Medium |
-| Mechanical | Opus 5.5 Low · Haiku 5.5 | Opus 5.5 Low · GPT-5.6 Sol Low | gpt-6.2-sol Low |
+| Deep | Opus 5.5 High | Opus 5.5 High · GPT-5.6 Sol High · Grok 4.7 High | gpt-6.2-astra High |
+| Standard | Opus 5.5 Medium | Opus 5.5 Medium · GPT-5.6 Sol Medium · Grok 4.7 Medium | gpt-6.2-sol Medium |
+| Mechanical | Opus 5.5 Low · Haiku 5.5 | Grok 4.7 Fast · Opus 5.5 Low · GPT-5.6 Sol Low | gpt-6.2-sol Low |
 
 ## Codex
 
@@ -32,6 +32,17 @@ recorded under `codex` in [`data/models.json`](../data/models.json), and each is
 | Deep | gpt-6.2-astra High | astra | — |
 | Standard | gpt-6.2-sol Medium | sol | GPT-5.6 Sol |
 | Mechanical | gpt-6.2-sol Low | sol | GPT-5.6 Sol |
+
+## Pinned in Cursor
+
+Grok 4.7 is pinned, not measured: the Cursor cells name it at the efforts set
+under `cursorPinned` in [`data/models.json`](../data/models.json), whatever the board ranks.
+
+| Tier | Cursor pin |
+|---|---|
+| Deep | Grok 4.7 High |
+| Standard | Grok 4.7 Medium |
+| Mechanical | Grok 4.7 Fast |
 
 ## Leaderboard slice
 
