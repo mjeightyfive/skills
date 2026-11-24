@@ -80,10 +80,21 @@ A request to pair reverses this for the session: pause at each step and wait.
 
 End a run with these headings:
 
-- **Needs you** — decisions or actions only the author can take.
+- **Needs you** — decisions or actions only the author can take, most blocking first. Write "Nothing." when there are none.
 - **Changed** — files touched and what changed.
 - **Found** — anything learned that was not a change.
 - **Not verified** — checks that did not run, and why.
+
+Each decision under Needs you is written so it can be made without reading back through the run. State it as one question, and say what waits on the answer. List the options below it, the recommended one first and marked "(recommended)", each with one short pro and one short con. A decision needs at least two real options; with only one, it is an action. An action — a sign-in, a secret, a push, a command only the author may run — gives the exact step or command instead.
+
+```markdown
+**Needs you**
+
+1. **Cache the pricing API response?** The checkout plan waits on this.
+   - **Cache for five minutes (recommended)** — pro: halves checkout p95. Con: a price change takes up to five minutes to show.
+   - **No cache** — pro: prices are always current. Con: p95 stays near 900 ms.
+2. **Push `main`.** Run `git push origin main`.
+```
 
 When the run leaves a diff uncommitted, end the reply with copy-pasteable `git add` (explicit paths only, never `git add -A` or `git add .`), `git commit`, and `git push` for that diff. Saying the commands were understood is not a substitute for printing them.
 

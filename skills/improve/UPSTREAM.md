@@ -16,3 +16,4 @@ Local changes:
 - Findings table has Confidence. MED and LOW name where the auditor looked. Correctness findings include a failing case or stay at most MED.
 - branch lists blocks-merge findings first. reconcile leads with what needs the author and marks a plan verified only after every criterion was re-run.
 - UI plans tie visual choices to existing tokens and name the patterns they will not introduce.
+- Report back spells out Needs you: each decision as a question with what it blocks, options recommended-first, each with a short pro and con.

@@ -152,7 +152,10 @@ Stop and report back (do not improvise) if:
 
 ## Report back
 
-- **Needs you** — decisions or actions only the author can take.
+- **Needs you** — decisions or actions only the author can take, or "Nothing.".
+  Each decision is one question plus what waits on it, then the options with
+  the recommended one first and marked "(recommended)", each with one short
+  pro and one short con. An action gives the exact step or command.
 - **Changed** — files touched and what changed.
 - **Found** — anything learned that was not a change.
 - **Not verified** — checks that did not run, and why.

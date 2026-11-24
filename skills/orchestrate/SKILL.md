@@ -49,9 +49,10 @@ Run as far as the limits allow without waiting for me.
 - A choice is mine when it needs authorisation, widens scope, cannot be
   undone, acts outside this workspace (sends, publishes, deploys, spends),
   or turns on something only I know. Park it.
-- To park: mark the chunk "parked" in the plan file with the question, the
-  options, your recommendation and what it blocks. Tell me in chat under
-  "Needs you" as soon as it comes up, without stopping. Then re-order and
+- To park: mark the chunk "parked" in the plan file with the question, what
+  it blocks, and the options with your recommendation first, each with one
+  short pro and one short con. Tell me in chat under "Needs you" as soon as
+  it comes up, without stopping. Then re-order and
   continue every chunk that does not depend on the answer.
 - Work that depends on a parked decision waits with it. Do not guess past
   one or build on one.
@@ -289,8 +290,10 @@ Then do a second pass answering "What did you leave out that I'd miss?" and
 append the answer to the same file under that heading.
 
 REPORT
-Open with "Needs you": every parked decision, with its options, your
-recommendation and what it blocks. Then what was done and verified and what
+Open with "Needs you", or "Nothing." when nothing is parked. Each parked
+decision is one question and what it blocks, then its options with your
+recommendation first and marked "(recommended)", each with one short pro and
+one short con, so I can answer without reading the run. Then what was done and verified and what
 was not; then an estimate-versus-actual table (stage | chunk | model |
 effort | estimated % | actual %); then a decision log limited to choices
 where a real alternative existed (decision, why, what the alternative would
