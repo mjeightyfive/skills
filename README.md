@@ -42,6 +42,51 @@ Skills with `disable-model-invocation: true` never compete, because the model ca
 job, and it is why `improve` was patched to add the flag: without it, its prose narrowing was
 advisory and it collided with `improve-animations`.
 
+## Which to reach for
+
+Spend the expensive model on deciding and the cheap one on doing. Tiers are the rows of the
+effort table in [docs/agents.md](docs/agents.md#model-and-effort).
+
+Most of the set needs no invoking. The `AGENTS.md` policy holds on every turn, and the
+auto-triggering skills — writing and coding guidelines, React and web-design rules, motion —
+load when a request matches them. What changes with the size of the task is which of the
+explicit-invoke skills to name.
+
+| Size | Example | Reach for | Tier |
+|---|---|---|---|
+| Tiny | a question, a copy change, a one-file fix | nothing, just ask | Mechanical or Standard |
+| Small | one feature with a clear shape | ask, or `/improve plan` then implement | Standard, or Deep then Mechanical |
+| Medium | a UI pass on one area | `interface-review`, `review-animations` | Standard |
+| Large | a repo audit, a backlog | `/improve`, then one session per plan | Deep, then Mechanical |
+| Too big for one sitting | a migration, a staged refactor, an overnight run | `/orchestrate` | Deep, routing chunks down |
+
+**Tiny.** Ask in plain words. Naming a skill adds nothing, and `orchestrate` skips its
+machinery for small jobs anyway.
+
+**Small.** If the spec is obvious, build it. If it needs working out, or a cheaper model or
+another tool will build it, `/improve plan <description>` writes `plans/001-….md` and a new
+session implements it. Run `/improve branch` before the PR; merge blockers are listed first.
+
+**Medium.** Name the reviewer: `interface-review` for static UI, `review-animations` for
+motion (both in the `web` profile). Fix in the same session, or turn a long list into plans.
+
+**Large.** `/improve` covers the most-changed code, `/improve deep` every package. Pick from
+the findings table; each chosen finding becomes a plan, and each plan runs in its own fresh
+session. Plans that share no files run in parallel, the rest in the order `plans/README.md`
+sets. `/improve reconcile` later checks what landed. The full loop is under
+[Using improve](#using-improve).
+
+**Too big for one sitting.** `/orchestrate <task>` stages the work against the usage window,
+has a fresh agent verify each change, and parks anything that is your call under Needs you
+while it carries on with the rest. When a stage will not fit before the reset, it writes a
+handoff and the prompt that resumes it. It can also drive a batch of `improve` plans:
+`/orchestrate implement plans 001–005 in the order plans/README.md sets`.
+
+Moving a step to another tool, hand off through the plan file rather than a paste, and take
+the model and effort from the prompt's header; what does not carry over is in
+[Switching tools mid-task](docs/agents.md#switching-tools-mid-task). Answer Needs you items by
+number — `orchestrate` picks parked work back up at the next chunk boundary.
+
 ## Using improve
 
 `improve` is in every profile. An expensive model audits the repo and writes plan files; a
